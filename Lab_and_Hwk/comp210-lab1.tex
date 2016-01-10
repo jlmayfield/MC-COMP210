@@ -1,0 +1,48 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath,amssymb,amsthm}
+
+
+\title{COMP 210 - Lab 1 - Procedural Java}
+\date{Spring 2015}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+For your first assignment you'll use Java to write the kind of procedural code you wrote in C++. This is not how we plan to use Java ever again. The point of this exercise is to get your basic tools up and running\sidenote{Eclipse and JUnit} and to get used to some differences between key statements in Java and C++.
+\end{abstract}
+
+\section{The Program}
+
+Between lab 1 and homework 1 you'll design, implement, and test the following procedures:
+\begin{itemize}
+\item A function named \textit{sumTo} that computes the sum off all the integers from $0$ to $n-1$ when given $n$. In mathematical terms it computes this:
+\[
+\sum\limits{i=0}^{n-1} i 
+\] 
+
+\item An output procedure named \textit{fizzbuzz} that carries out the classic fizzbuzz problem. This procedure takes the PrintWriter and a positive integer $n$ and for each number $i$ from $1$ until $n$ it will print:
+\begin{itemize}
+\item \textit{Fizz} if the number is divisible by $3$ but not $5$
+\item \textit{Buzz} if the number is divisible by $5$ but not $3$
+\item \textit{FizzBuzz} if the number is divisible by $3$ and $5$
+\item $i$ otherwise
+\end{itemize}
+Output should be comma separated and on one line. There should be no comma after the final output. 
+
+\item A mutator named \textit{rmvAll} which takes a StringBuilder\sidenote{mutable string} and a character and remove all occurrences of the character form the string. 
+
+\item An input procedure named \textit{readUntil} which takes a Scanner, a string and a StringBuilder and reads all the strings from the Scanner until the string argument is encountered or until there are no more string, whichever comes first. These strings read are appended to the StringBuilder without any separation. 
+\end{itemize}
+
+\section{Lab 1}
+
+Your goal in lab is to get your project setup, main stubbed, the procedures declared, documented, and stubbed, and the JUnit tests stubbed\sidenote{letting Eclipse do the work}. Once this is done, be sure you can run your stubbed out code. From there move on to writing tests and completing \textit{main}.  When that's done, and only then, start on the implementation of the functions\sidenote{If I see function implementation and not tests or main, you get a 1}. 
+
+At the end of lab or when you finish the lab work, which ever comes first, submit the source code and only the source code using \textit{handin}. The assignment is \textit{lab1} and the course is \textit{comp210}. Handin lets you submit multiple directories, so just handin the src and tests folders directly. If I get anything other than source code, you'll have to resubmit or get a zero.
+
+\section{Homework 1}
+
+Complete the lab work if necessary then implement the procedures. Debug as needed. Submit the completed source code as assignment \textit{hwk1} using handin. Once again, submission containing anything other than the java source code will not be accepted. 
+
+\end{document}
