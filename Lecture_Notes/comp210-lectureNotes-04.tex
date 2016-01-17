@@ -1,0 +1,133 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath,amssymb,amsthm}
+
+ 
+\title{COMP 210 - Lecture Notes - 04 - Basic Classes and Hierarchies}
+
+% 4 phys page 39 & 12.1 phys page 127
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+These notes are more or less a reorganization and retelling of content from \textit{How to Design Classes} chapters 1-4 and 10-14. Through a problem with geometric shapes we'll explore the design and implementation of OO code using \textsc{Object Containment} and \textsc{Class Unions}.   
+\end{abstract}
+
+\section{Some 2D Geometry}
+
+Let's think about the following problem\sidenote{See page 27 and 155 in HtDC}:
+\begin{quote}
+You've been tasked to develop some libraries for managing basic shapes laid out on a graphical canvas. The canvas is just a whole-valued, positive only coordinate system addressed in row then column order with the origin, $(0,0)$ in the upper left hand corner.\sidenote{The standard coordinate system for 2D computer graphics}. For starters, your library should support three shapes: \textit{Circles}, \textit{Rectangles}, and \textit{Dots}. All shapes have an associated location. For circles that location is the center of the circle. For rectangles, that location is the upper left hand corner of the rectangle. For dots, that location is, essentially, the dot. Circles also have an associated radius. Similarly, rectangles have a length and width where length is the number of rows covered by the rectangle and width is the number of columns.  
+All shapes must have the following functionality: compute and return its area, determine if a given point is within the bounds of that shape, compute the distance of the shapes ``pin'' location to a given location, modify the location of the shape, and compute and return the bounding box of a shape as a Rectangle.
+\end{quote}
+
+\section{The Objects for Consideration}
+
+The first design question to ask your self is, ``What objects are implied by the problem description, what are their classes, and how are the represented?'' In this problem we see 4 concrete classes:
+\begin{enumerate}
+\item 2D Cartesian Points for \textit{row} and \textit{column} coordinates
+\item Dots which are represented by a location
+\item Rectangles which are represented by a location, width, and length
+\item Circles which are represented by a location and radius
+\end{enumerate}
+
+Right away we see the need for \textsc{object containment}: every one of the shape classes will contain an instance of the Cartesian Point class. You might be tempted to drop the point class all together and simply use a row and column field in each shape type. You'd be wrong. For starters, there is little reason to flatten the problem logic like this. You're likely to think and talk about ``locations'' and ``points'' and there's not reason to not reflect that thinking in your design. Additionally, encapsulating location specific functionality and logic, creates code independence between the shapes and the implementation of their locations. \textit{As long as the interface to a Cartesian Point never changes, you're free to tinker around with the implementation of some or all of it's behaviors without breaking the Shape's own implementation.}\sidenote{this is referred to as \textit{Separation of Concerns}}. Finally, by moving location logic into a separate class we get to reuse code. If every Shape does it's own location logic, then you'll end up repeating some logic verbatim within each shape class. 
+
+\section{Some of these things are a lot like the others}  
+
+Dots, rectangles, and circles are not unrelated. In fact, we keep referring to them generically as \textit{shapes}.  A shape is not an object type in the same sense as a Rectangle. The later is tangible, concrete, while the former is abstract and conceptual. We can understand and think in terms of the Shape abstraction, but have not yet seen how to encode this abstract relationship into our programs. 
+
+If a Shape isn't a concrete object, then there can't be a Shape class. What shape really describes is the \textsc{class union}\sidenote{union here is the same union discussed in the mathematics of sets} of the Dot, Rectangle, and Circle classes. Any object of type Dot, Rectangle, or Circle should also be viewed as an instance of the Shape type. The question we must ask now is, ``what makes a shape a shape?'' 
+
+Once again we turn to behavioral abstraction. We'll define shapes not by specific data, or physical properties by by behavior. In programming terms, we're talking about a \textsc{common public \textbf{interface}}. The old saying, ``walks like a duck, quacks like a duck, must be a duck'' is appropriate here. It defines ducks by what they do, not by the presence of a beak, feather, webbed feet, etc. 
+
+Our problem statement clearly lists the expected behavior for shapes. 
+\begin{itemize}
+\item Shapes can compute their own area
+\item Shapes can determine if a given point falls within the shape
+\item Shapes can determine the distance from the shape's pin location to another point
+\item Shapes can compute their own bounding boxes
+\item Shape can change their location
+\end{itemize}
+Notice that two of these behaviors could be restated as physical properties and envisioned as data fields, not methods:
+\begin{itemize}
+\item Shapes have an area
+\item Shapes have a bounding box
+\end{itemize}
+This way of thinking is restricting.  Both properties can be computed from other inescapable properties of a Shape. More importantly, committing to representation via data means committing to a specific implementation.  If area is something returned by a shape, then we have not committed ourselves to any one means of achieving that return value. This same principle underlies the usage of basic getters and setters. By restricting access to data fields to methods, to abstractions, then you're not committing to any one representation of that data. 
+
+What we're seeing is our first \textsc{class hierarchy}.  When a set of classes can be viewed as subsets of some larger, logical class, then we can create a \textsc{class union} by identifying the expected behavioral interface for all members of that union. 
+
+
+\section{From Hierarchy Design to Java Implementation}
+
+A class union defined solely in terms of object behavior\sidenote{methods} is defined using a Java \textit{interface}. An interface provides a series of method declarations and documentation. The intent is quite clear: define the type by it's expected interface. Concrete instances of that type, i.e. the subclasses of the union, then declare that they \textit{implement} that interface\sidenote{Interface-based types can also be subtypes of a union.  In this case the subtype interface \textit{extends} its supertype}.  Classes can implement any number of interfaces in Java. Once a class declares an interface, then it must either implement that interface or declare unimplemented interface methods as abstract using the \textit{abstract} keyword. This later option forces the class itself to be abstract. We'll learn about abstract methods and classes later. For now, all our unions will be represented by their interface. 
+
+\subsection{UML Diagram}
+
+Before we get to the coding, we'll sketch out a visual diagram of our Class hierarchy using \textbf{UML}\sidenote{Unified Modeling Language}. This lets us write down everything but actual method implementation details. In doing so we see all the ``what'' details of our design without getting bogged down by the ``how''.  This is nice in part because Java doesn't typically let us separate this like we did in C++\sidenote{Header + Implementation}.  It also let's you devise an implementation plan.  Eclipse can do a lot of the coding grunt work for us, but we need to be able to direct it. It can help you implement a design, but I won't do the design work for you. By diagramming your hierarchy, you're writing down your ideas in such a way that doesn't commit you to any code.
+
+In UML, all classes and interfaces are designated with a box. At the top of the box is the class/interface name. Interfaces are labeled as such to avoid confusion with concrete classes. Object containment relationships are diagrammed using an arrow with an arrowhead shaped point that points from container to containee. Subclasses of a class union have an arrow with a triangular point that points from subtype to supertype. 
+All interface methods are declared under the interface name. Methods are declared in the following way:
+\begin{verbatim}
+name(parameter list) : return type
+\end{verbatim}
+Public and private methods can be designated as such using $+$ for public and $-$ for private. For classes, we first list the fields under the class name using the following syntax:
+\begin{verbatim}
+name : type
+\end{verbatim}
+Once again, a $+$ or $-$ can be used to designate a field public versus private. Class methods are listed below the fields with the same syntax as interface methods. However, we do not have to restate any methods inherited from a superclass or interface. It behooves you to work top-down\sidenote{Abstract to Concrete. Supertype to subtype}. 
+
+Here's what the diagram for our Shape hierarchy looks like:
+\begin{figure}
+TODO
+\caption{Shape Hierarchy in UML}
+\end{figure}
+
+There's a lot more to UML diagramming. We're just employing some basics in order to clearly state the core details of our class design.
+
+\subsection{Implementation in Java}
+
+Eclipse has several features that help you to get Classes and Class Hierarchies setup quickly:
+\begin{itemize}
+\item Automatic stubs for inherited methods by declaring interfaces\sidenote{and super classes} in the new class wizard.
+\item Launching the new Class/Interface wizard from unresolved type errors as a Quick fix option.
+\item Automatic generation of Class getters and setters based on declared fields
+\item Automatic generation of Class constructors based on declared fields
+\item Automatic generation of \textit{equals}, \textit{hashCode}, and \textit{toString} overrides based on class fields
+\end{itemize}
+Basically, most of your boilerplate can be automatically generated for you and the methods that all objects inherit from the \textit{Object} class can be automatically overridden using accepted Java best practices.  
+
+To make the best use of Eclipse's automatic code generation features, we'll work the implementation of our hierarchies from most to least abstract.  This typically means interface on down. 
+\begin{enumerate}
+
+\item Complete interfaces by declaring and documenting all their methods. \newline
+Whenever you need to reference a Class or Interface that is a part of your program but is not yet implemented, just go ahead and state the type. Eclipse will highlight it as an error. Ignore it until the interface is complete.
+
+\item For any undeclared interfaces or classes in your completed interface, use the \textit{Create Class} or \textit{Create Interface} quick fix\sidenote{hover the mouse over the error} to have Eclipse stub out the Class/Interface. Be sure to add interfaces to the classes from within the wizard so that eclipse can stub out the methods for you.
+
+\item Repeat the above steps until you have rough stubs for the complete hierarchy. All that should be left at this point are classes\sidenote{or hierarchies} of contained objects. Repeat the above stubbing process for those classes/hierarchies as well. 
+
+\item For each class, add the data field declarations at the top of the class, above stubbed out methods.\sidenote{We'll list fields then methods}.
+
+\item For each class use the \textit{Source} menu to auto generate:
+\begin{itemize}
+\item A no-arg/default constructor and a field initialization construction\sidenote{one argument per field}
+\item Getters and Setters
+\item An \textit{equals} and \textit{hashCode} method
+\item A \textit{toString} method
+\end{itemize}
+Eclipse lets you specify the entry point for all the code it generates. For our Java classes, we want all the above stubs and generated code listed in the following order: fields, constructors, getters and setters, equals, hashCode, toString, and finally inherited methods.  
+
+\item All the boilerplate and stubs for all the methods in all the classes should now be in place and we can now generate JUnit Test cases for each class and begin writing your tests. \newline
+In practice you should test any method that is public. Constructors can be tested implicitly through the methods\sidenote{if it behaves the way its supposed to, then it was constructed correctly}. We may loosen our testing practices up for auto-generated code eventually, but to start out, writing tests is an excellent way to familiarize yourself with the methods and their functionality. 
+
+\item Verify your auto-generated code then begin implementing your core methods. 
+\end{enumerate}
+
+It often makes sense, and is convenient, to run the tests for multiple classes at once. For example, you might like to run all the tests for all the classes that implement a particular interface. This is accomplished by a \textit{JUnit Tests Suite}. To create one go to \textit{New > Other > JUnit > Test Suite} and use the wizard to create a suite. 
+
+
+
+
+\end{document}
