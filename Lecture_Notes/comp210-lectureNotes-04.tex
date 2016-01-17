@@ -1,6 +1,31 @@
 \documentclass[]{tufte-handout}
 \usepackage{amsmath,amssymb,amsthm}
 
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+
  
 \title{COMP 210 - Lecture Notes - 04 - Basic Classes and Hierarchies}
 
@@ -126,6 +151,50 @@ In practice you should test any method that is public. Constructors can be teste
 \end{enumerate}
 
 It often makes sense, and is convenient, to run the tests for multiple classes at once. For example, you might like to run all the tests for all the classes that implement a particular interface. This is accomplished by a \textit{JUnit Tests Suite}. To create one go to \textit{New > Other > JUnit > Test Suite} and use the wizard to create a suite. 
+
+\section{Polymorphic Method Dispatch}
+
+While you cannot instantiate a Shape object\sidenote{nor any Interface type}. You can have variables of that type.That variable can take on values\sidenote{reference objects} of any of the classes that implement it. We call this variable \textsc{polymorphic} as its actual value takes on many different forms, or types. There is often significant advantage in doing this. It's important to understand how computation proceeds when working with these abstractly typed variables. 
+
+Consider the following test:
+\begin{figure}
+\begin{lstlisting}
+// A 5x5 square at row 14, column 10
+Shape aShape = new Rectangle(new Loc(14,10),5,5);
+assertEquals(aShape.area(),25.0,0.000001);
+\end{lstlisting}
+\caption{Testing a Rectangle with a Shape Variable}
+\end{figure}
+The type of \textit{aShape} is \textit{Shape}. The Shape type is an interface and has no concrete implementation for area. So, determine how to compute the area of \textit{aShape} cannot be as simple as, ``run the method implementation for the type of the variable.''  
+
+The key, of course, is that the type of the variable is less important than the type of the value. In our example, the value stored in \textit{aShape} is of type \textit{Rectangle}. This type has a clear and unambiguous implementation for area. The only question is how does the computer make this connection? The answer is \textsc{substitution}. 
+First the computer evaluates the variable itself and effectively substitutes the name for the value. In our example this produces the unambiguous statement\sidenote{the assigned expression is the value}:
+\begin{figure}
+\begin{lstlisting}
+assertEquals(new Rectangle(new Loc(14,10),5,5).area(),25.0,0.000001);
+\end{lstlisting}
+\caption{Name-Value Substitution to resolve ambiguity}
+\end{figure}
+
+What if this came next? 
+\begin{figure}
+\begin{lstlisting}
+aShape = new Dot(new Loc(0,0));
+assertEquals(aShape.area(),0.0,0.0000001);
+\end{lstlisting}
+\caption{Assigning a new value to \textit{aShape}}
+\end{figure}
+
+Now the exact same expression\sidenote{aShape.area()} produces the execution of different code. 
+\begin{figure}
+\begin{lstlisting}
+assertEquals(new Dot(new Loc(0,0)).area(),25.0,0.000001);
+\end{lstlisting}
+\caption{Once again, object type, not variable type, determines method call}
+\end{figure}
+
+This is an entirely new phenomenon for us. The reason is clear, the expression maybe the same but the type of the object referenced by aShape has changed and it's that type that determines which implementation of area is executed. This feature of OOP and class hierarchies is called \textsc{polymorphic method dispatch}\sidenote{aka Dynamic Dispatch}. Recall that the metaphor of operation is message passing. Calling \textit{area} is done by passing a message, or dispatching a message, to the appropriate object which then executes the code. The dispatch described by this expression can takes on many different forms\sidenote{polymorphic} within a single program based on the type of the object referenced by \textit{aShape}.
+
 
 
 
