@@ -1,0 +1,50 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{hyperref}
+
+\title{COMP210 - Lab2}
+\author{}
+\date{ Spring 2016 }
+
+% Work ex 4.5 (pp 46) + 14.6 (pp 152)
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+For lab and homework two you'll carryout the design and implementation of a class hierarchy from scratch. 
+\end{abstract}
+
+\section{The Problem}
+
+The follow problem comes from \textit{How to Design Classes}\sidenote{\url{http://www.ccs.neu.edu/home/matthias/htdc.html} pg 140}:
+\begin{quote}
+``$\ldots$Develop a program that creates an on-line gallery from three
+different kinds of records: images (gif), texts (txt), and sounds
+(mp3). All have names for source files and sizes (number of
+bytes). Images also include information about the height, the
+width, and the quality of the image. Texts specify the number of
+lines needed for visual representation. Sounds include information
+about the playing time of the recording, given in seconds.
+$\ldots$
+Develop the following methods for this program:
+\begin{enumerate}
+\item timeToDownload, which computes how long it takes to download a file
+at some given network connection speed (in bytes per second);
+\item smallerThan, which determines whether the file is smaller than some
+given maximum size;
+\item sameName, which determines whether the name of a file is the same
+as some given name.
+\end{enumerate}
+\end{quote}
+
+\section{Lab 2}
+
+Your goal for lab is to complete the UML class hierarchy diagram and then begin declaring, documenting and stubbing all the classes and interfaces. If you complete this by the end of the lab period, submit the code as assignment \textit{lab2} using handin and show your diagram to the instructor before you leave. 
+
+\section{Homework 2}
+
+For homework you should complete the tests and implementation of your class hierarchy.  Submit the source code as assignment \textit{hwk2} using handin.
+
+
+\end{document}
