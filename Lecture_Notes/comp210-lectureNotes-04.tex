@@ -120,6 +120,7 @@ Eclipse has several features that help you to get Classes and Class Hierarchies 
 \item Automatic generation of Class getters and setters based on declared fields
 \item Automatic generation of Class constructors based on declared fields
 \item Automatic generation of \textit{equals}, \textit{hashCode}, and \textit{toString} overrides based on class fields
+\item Automatic generation of stubs for undeclared methods
 \end{itemize}
 Basically, most of your boilerplate can be automatically generated for you and the methods that all objects inherit from the \textit{Object} class can be automatically overridden using accepted Java best practices.  
 
@@ -147,7 +148,8 @@ Eclipse lets you specify the entry point for all the code it generates. For our 
 \item All the boilerplate and stubs for all the methods in all the classes should now be in place and we can now generate JUnit Test cases for each class and begin writing your tests. \newline
 In practice you should test any method that is public. Constructors can be tested implicitly through the methods\sidenote{if it behaves the way its supposed to, then it was constructed correctly}. We may loosen our testing practices up for auto-generated code eventually, but to start out, writing tests is an excellent way to familiarize yourself with the methods and their functionality. 
 
-\item Verify your auto-generated code then begin implementing your core methods. 
+\item Verify your auto-generated code then begin implementing your core methods. \newline
+If, while implementing your design, you decide you need a helper method, go ahead and call it. Eclipse generates an undeclared method error with a quick fix option of adding that method to the appropriate class. If you're confident in the helper's purpose, then finish the method that caused you to need the helper. If you're unsure about the helper, then stop work on the current method in order to document, write tests for, and implement the helper.
 \end{enumerate}
 
 It often makes sense, and is convenient, to run the tests for multiple classes at once. For example, you might like to run all the tests for all the classes that implement a particular interface. This is accomplished by a \textit{JUnit Tests Suite}. To create one go to \textit{New > Other > JUnit > Test Suite} and use the wizard to create a suite. 
