@@ -1,6 +1,10 @@
 \documentclass[]{tufte-handout}
 \usepackage{amsmath,amssymb,amsthm}
-
+\usepackage{emp}
+\usepackage{ifpdf,graphicx}
+\ifpdf
+  \DeclareGraphicsRule{*}{mps}{*}{}
+\fi
 \usepackage{listings}
 \usepackage{color}
 
@@ -25,7 +29,7 @@
   tabsize=3
 }
 
-
+\empprelude{input metauml}
  
 \title{COMP 210 - Lecture Notes - 04 - Basic Classes and Hierarchies}
 
@@ -101,15 +105,109 @@ Public and private methods can be designated as such using $+$ for public and $-
 \begin{verbatim}
 name : type
 \end{verbatim}
-Once again, a $+$ or $-$ can be used to designate a field public versus private. Class methods are listed below the fields with the same syntax as interface methods. However, we do not have to restate any methods inherited from a superclass or interface. It behooves you to work top-down\sidenote{Abstract to Concrete. Supertype to subtype}. 
+Once again, a $+$ or $-$ can be used to designate a field public versus private\sidenote{In the diagrams used in these notes you'll see an open or closed lock}. Class methods are listed below the fields with the same syntax as interface methods. However, we do not have to restate any methods inherited from a superclass or interface. It behooves you to work top-down\sidenote{Abstract to Concrete. Supertype to subtype}. 
 
-Here's what the diagram for our Shape hierarchy looks like:
-\begin{figure}
-TODO
-\caption{Shape Hierarchy in UML}
-\end{figure}
+Figure \ref{fig:Shapes} provides the complete UML diagram for our Shape hierarchy looks like:
+
+\begin{empfile}["ln04-shape"]
+\begin{figure*}[ht!]
+\begin{emp}(0,0)
+
+Interface.Shp("Shape")
+("+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle",
+ "+distanceTo(Loc l) : double",
+ "+moveTo(Loc l) : void");
+classStereotypes.Shp("<<interface>>");
+
+Class.Dot("Dot")
+("-pinloc : Loc")
+("+Dot()",
+ "+Doc(Loc l)",
+ "+getLocation() : Loc",
+ "+setLoccation(Loc l) : void",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String",
+ "+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle",
+  "+moveTo(Loc l) : void",
+ "+distanceTo(Loc l) : double");
+
+Class.Rec("Rectangle")
+("-pinloc : Loc","+width : int","+height : int")
+("+Rectangle()",
+ "+Rectangle(Loc l, int width, int height)",
+ "+getWidth() : int",
+ "+setWidth(int width) : void",
+ "+getHeight() : int",
+ "+setHeight(int height) : void",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String",
+ "+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle",
+  "+moveTo(Loc l) : void",
+ "+distanceTo(Loc l) : double");
+
+Class.Circ("Circle")
+("-pinloc : Loc","+radius : int")
+("+Circle()",
+ "+Circle(Loc l, int radius)",
+ "+getLocation() : Loc",
+ "+setLoccation(Loc l) : void",
+ "+getRadius() : int",
+ "+setRadius(int radius) : void",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String",
+ "+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle",
+ "+moveTo(Loc l) : void",
+ "+distanceTo(Loc l) : double");
+
+Class.Loc("Loc")
+("+row : int","+col : int")
+("+Loc()",
+ "+Loc(int row, int col)", 
+ "+getRow() : int",
+ "+setRow(int row) : void",
+ "+getCol() : int",
+ "+setCol(int col) : void",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String");
+ 
+
+topToBottom(40)(Shp,Circ);
+topToBottom(50)(Circ,Loc);
+leftToRight(40)(Rec,Circ,Dot);
+
+
+drawObjects(Shp,Rec,Circ,Dot,Loc);
+link(inheritance)(Rec.ne -- Shp.sw);
+link(inheritance)(Circ.n -- Shp.s);
+link(inheritance)(Dot.nw -- Shp.se);
+
+link(associationUni)(Rec.se -- Loc.nw);
+link(associationUni)(Circ.s -- Loc.n);
+link(associationUni)(Dot.sw -- Loc.ne);
+
+\end{emp}
+\caption{Shape Class Hierarchy}
+\label{fig:Shapes}
+\end{figure*}
+\end{empfile} 
+
+
 
 There's a lot more to UML diagramming. We're just employing some basics in order to clearly state the core details of our class design.
+
+
 
 \subsection{Implementation in Java}
 
