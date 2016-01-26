@@ -52,7 +52,7 @@ All shapes must have the following functionality: compute and return its area, d
 
 \section{The Objects for Consideration}
 
-The first design question to ask your self is, ``What objects are implied by the problem description, what are their classes, and how are the represented?'' In this problem we see 4 concrete classes:
+The first design question to ask your self is, ``What concrete objects are implied by the problem description, what are their classes, and how are the represented?'' In this problem we see 4 concrete classes:
 \begin{enumerate}
 \item 2D Cartesian Points for \textit{row} and \textit{column} coordinates
 \item Dots which are represented by a location
@@ -92,22 +92,125 @@ What we're seeing is our first \textsc{class hierarchy}.  When a set of classes 
 
 A class union defined solely in terms of object behavior\sidenote{methods} is defined using a Java \textit{interface}. An interface provides a series of method declarations and documentation. The intent is quite clear: define the type by it's expected interface. Concrete instances of that type, i.e. the subclasses of the union, then declare that they \textit{implement} that interface\sidenote{Interface-based types can also be subtypes of a union.  In this case the subtype interface \textit{extends} its supertype}.  Classes can implement any number of interfaces in Java. Once a class declares an interface, then it must either implement that interface or declare unimplemented interface methods as abstract using the \textit{abstract} keyword. This later option forces the class itself to be abstract. We'll learn about abstract methods and classes later. For now, all our unions will be represented by their interface. 
 
-\subsection{UML Diagram}
-
 Before we get to the coding, we'll sketch out a visual diagram of our Class hierarchy using \textbf{UML}\sidenote{Unified Modeling Language}. This lets us write down everything but actual method implementation details. In doing so we see all the ``what'' details of our design without getting bogged down by the ``how''.  This is nice in part because Java doesn't typically let us separate this like we did in C++\sidenote{Header + Implementation}.  It also let's you devise an implementation plan.  Eclipse can do a lot of the coding grunt work for us, but we need to be able to direct it. It can help you implement a design, but I won't do the design work for you. By diagramming your hierarchy, you're writing down your ideas in such a way that doesn't commit you to any code.
 
 In UML, all classes and interfaces are designated with a box. At the top of the box is the class/interface name. Interfaces are labeled as such to avoid confusion with concrete classes. Object containment relationships are diagrammed using an arrow with an arrowhead shaped point that points from container to containee. Subclasses of a class union have an arrow with a triangular point that points from subtype to supertype. 
+
+Figure \ref{fig:boxesonly} shows the basic structure of the Shape hierarchy design. An instance of the \textit{Loc} class is contained within each of the Shape subclasses\sidenote{Dot,Rectangle,and Circle each \textbf{has-a} Loc}. The Dot, Circle, and Rectangle classes form the Shape type when joined by a union. This means that they each inherit that type\sidenote{Dot, Circle, and Rectangle each \textbf{is-a} Shape}. 
+\begin{empfile}["ln04-boxes"]
+\begin{figure}[ht!]
+\begin{emp}(0,0)
+
+Interface.Shp("Shape")();
+Shp.info.iAttributeStack.top := 0;
+Shp.info.iAttributeStack.bottom := 0;
+Shp.info.iMethodStack.top := 0;
+Shp.info.iMethodStack.bottom := 0;
+classStereotypes.Shp("<<interface>>");
+
+Class.Dot("Dot")()();
+Dot.info.iAttributeStack.top := 0;
+Dot.info.iAttributeStack.bottom := 0;
+Dot.info.iMethodStack.top := 0;
+Dot.info.iMethodStack.bottom := 0;
+
+Class.Rec("Rectangle")()();
+Rec.info.iAttributeStack.top := 0;
+Rec.info.iAttributeStack.bottom := 0;
+Rec.info.iMethodStack.top := 0;
+Rec.info.iMethodStack.bottom := 0;
+
+Class.Circ("Circle")()();
+Circ.info.iAttributeStack.top := 0;
+Circ.info.iAttributeStack.bottom := 0;
+Circ.info.iMethodStack.top := 0;
+Circ.info.iMethodStack.bottom := 0;
+
+Class.Loc("Loc")()();
+Loc.info.iAttributeStack.top := 0;
+Loc.info.iAttributeStack.bottom := 0;
+Loc.info.iMethodStack.top := 0;
+Loc.info.iMethodStack.bottom := 0;
+
+topToBottom(40)(Shp,Circ);
+topToBottom(50)(Circ,Loc);
+leftToRight(40)(Rec,Circ,Dot);
+
+drawObjects(Shp,Rec,Circ,Dot,Loc);
+link(inheritance)(Rec.ne -- Shp.sw);
+link(inheritance)(Circ.n -- Shp.s);
+link(inheritance)(Dot.nw -- Shp.se);
+
+link(associationUni)(Rec.se -- Loc.nw);
+link(associationUni)(Circ.s -- Loc.n);
+link(associationUni)(Dot.sw -- Loc.ne);
+
+\end{emp}
+\label{ref:boxesonly}
+\caption{Class and Interface Structure for Shape Hierarchy}
+\end{figure}
+\end{empfile}
+
+The class union relationship is captured in java through the \textbf{implements} keyword. This is illustrated in figure \ref{fig:implements}
+\begin{figure}
+\begin{lstlisting}
+// In Shape.java
+public interface Shape{
+  // Declarations here...
+}
+
+// In Rectangle.java
+public class Rectangle implements Shape{
+  // Definitions here
+}
+
+// In Dot.java
+public class Dot implements Shape{
+  // Definitions here
+}
+
+// In Circle.java
+public class Circle implements Shape{
+  // Definitions here
+}
+\end{lstlisting}
+\label{fig:implements}
+\caption{Connecting Shape Subtypes to their Supertype}
+\end{figure}
+
+
 All interface methods are declared under the interface name. Methods are declared in the following way:
 \begin{verbatim}
 name(parameter list) : return type
 \end{verbatim}
-Public and private methods can be designated as such using $+$ for public and $-$ for private. For classes, we first list the fields under the class name using the following syntax:
+Public and private methods can be designated as such using $+$ for public and $-$ for private\sidenote{In the diagrams used in these notes you'll see an open or closed lock}. In figure \ref{ref:ShapeInterface} we see the complete UML diagram for the \textit{Shape} interface.
+
+\begin{empfile}["ln04-shapeiface"]
+\begin{figure}[ht!]
+\begin{emp}(0,0)
+
+Interface.Shp("Shape")(
+ "+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle",
+ "+distanceTo(Loc l) : double",
+ "+moveTo(Loc l) : void");
+classStereotypes.Shp("<<interface>>");
+
+drawObjects(Shp);
+
+\end{emp}
+\label{ref:ShapeInterface}
+\caption{The Shape Interface}
+\end{figure}
+\end{empfile}
+
+
+For classes, we first list the fields under the class name using the following syntax:
 \begin{verbatim}
 name : type
 \end{verbatim}
-Once again, a $+$ or $-$ can be used to designate a field public versus private\sidenote{In the diagrams used in these notes you'll see an open or closed lock}. Class methods are listed below the fields with the same syntax as interface methods. However, we do not have to restate any methods inherited from a superclass or interface. It behooves you to work top-down\sidenote{Abstract to Concrete. Supertype to subtype}. 
-
-Figure \ref{fig:Shapes} provides the complete UML diagram for our Shape hierarchy looks like:
+Once again, a $+$ or $-$ can be used to designate a field public versus private. Class methods are listed below the fields with the same syntax as interface methods. However, we do not have to restate any methods inherited from a superclass or interface. We will, for the time being, restate the methods from \textit{java.lang.Object} that we're overriding\sidenote{equals,toString,hashCode}. In addition to these methods we'll create two constructors, a default constructor and one to initialize all the fields, as well as a suite of field accesssors and mutators. Figure \ref{fig:Shapes} provides the complete UML diagram for our Shape hierarchy looks like:
 
 \begin{empfile}["ln04-shape"]
 \begin{figure*}[ht!]
@@ -137,7 +240,7 @@ Class.Dot("Dot")
  "+distanceTo(Loc l) : double");
 
 Class.Rec("Rectangle")
-("-pinloc : Loc","+width : int","+height : int")
+("-pinloc : Loc","-width : int","-height : int")
 ("+Rectangle()",
  "+Rectangle(Loc l, int width, int height)",
  "+getWidth() : int",
@@ -154,7 +257,7 @@ Class.Rec("Rectangle")
  "+distanceTo(Loc l) : double");
 
 Class.Circ("Circle")
-("-pinloc : Loc","+radius : int")
+("-pinloc : Loc","-radius : int")
 ("+Circle()",
  "+Circle(Loc l, int radius)",
  "+getLocation() : Loc",
@@ -171,7 +274,7 @@ Class.Circ("Circle")
  "+distanceTo(Loc l) : double");
 
 Class.Loc("Loc")
-("+row : int","+col : int")
+("-row : int","-col : int")
 ("+Loc()",
  "+Loc(int row, int col)", 
  "+getRow() : int",
@@ -202,8 +305,6 @@ link(associationUni)(Dot.sw -- Loc.ne);
 \label{fig:Shapes}
 \end{figure*}
 \end{empfile} 
-
-
 
 There's a lot more to UML diagramming. We're just employing some basics in order to clearly state the core details of our class design.
 
