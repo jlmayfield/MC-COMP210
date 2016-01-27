@@ -12,15 +12,20 @@
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 
-\lstset{frame=tb,
+\lstset{
+  frame=tb,
   language=Java,
   aboveskip=3mm,
   belowskip=3mm,
   showstringspaces=false,
   columns=flexible,
   basicstyle={\small\ttfamily},
-  numbers=none,
-  numberstyle=\tiny\color{gray},
+  numbers=left,
+  stepnumber=2,    
+  firstnumber=1,
+  numbersep=5pt,
+  numberfirstline=true,
+  numberstyle=\tiny\color{black},
   keywordstyle=\color{blue},
   commentstyle=\color{dkgreen},
   stringstyle=\color{mauve},
@@ -52,15 +57,18 @@ All shapes must have the following functionality: compute and return its area, d
 
 \section{The Objects for Consideration}
 
-The first design question to ask your self is, ``What concrete objects are implied by the problem description, what are their classes, and how are the represented?'' In this problem we see 4 concrete classes:
+The first design question to ask yourself is, ``What concrete objects are implied by the problem description, what are their classes, and how are the represented?'' You need to establish the types/values/objects that will make up the problem domain so that problem funcitonality can be attributed to the most appropriate type. In this problem we see 3 concrete classes:
 \begin{enumerate}
-\item 2D Cartesian Points for \textit{row} and \textit{column} coordinates
 \item Dots which are represented by a location
 \item Rectangles which are represented by a location, width, and length
 \item Circles which are represented by a location and radius
 \end{enumerate}
+There is another logically implied class as well: 
+\begin{enumerate}
+\item 2D Canvas locations, i.e. (row,column) addresses for shape pin locations
+\end{enumerate}
 
-Right away we see the need for \textsc{object containment}: every one of the shape classes will contain an instance of the Cartesian Point class. You might be tempted to drop the point class all together and simply use a row and column field in each shape type. You'd be wrong. For starters, there is little reason to flatten the problem logic like this. You're likely to think and talk about ``locations'' and ``points'' and there's not reason to not reflect that thinking in your design. Additionally, encapsulating location specific functionality and logic, creates code independence between the shapes and the implementation of their locations. \textit{As long as the interface to a Cartesian Point never changes, you're free to tinker around with the implementation of some or all of it's behaviors without breaking the Shape's own implementation.}\sidenote{this is referred to as \textit{Separation of Concerns}}. Finally, by moving location logic into a separate class we get to reuse code. If every Shape does it's own location logic, then you'll end up repeating some logic verbatim within each shape class. 
+If each shape type \textit{has a}n associated location then we're dealing with \textsc{object containment}. You might be tempted to drop the location class all together and simply use a row and column field in each shape type. You'd be wrong. For starters, there is little reason to flatten the problem logic like this. You're likely to think and talk about ``locations'' and ``points'' and there's not reason to not reflect that thinking in your design. Additionally, encapsulating location specific functionality and logic, creates code independence between the shapes and the implementation of their locations. \textit{As long as the interface to a 2D point never changes, you're free to tinker around with the implementation of some or all of it's behaviors without breaking the Shape's own implementation.}\sidenote{this is referred to as \textit{Separation of Concerns}}. Finally, by moving location logic into a separate class we get to reuse code. If every Shape does it's own location logic, then you'll end up repeating some logic verbatim within each shape class. 
 
 \section{Some of these things are a lot like the others}  
 
@@ -70,27 +78,28 @@ If a Shape isn't a concrete object, then there can't be a Shape class. What shap
 
 Once again we turn to behavioral abstraction. We'll define shapes not by specific data, or physical properties by by behavior. In programming terms, we're talking about a \textsc{common public \textbf{interface}}. The old saying, ``walks like a duck, quacks like a duck, must be a duck'' is appropriate here. It defines ducks by what they do, not by the presence of a beak, feather, webbed feet, etc. 
 
-Our problem statement clearly lists the expected behavior for shapes. 
+Our problem statement clearly lists the expected behavior for shape objects: 
 \begin{itemize}
 \item Shapes can compute their own area
 \item Shapes can determine if a given point falls within the shape
 \item Shapes can determine the distance from the shape's pin location to another point
 \item Shapes can compute their own bounding boxes
-\item Shape can change their location
+\item Shape  can change their location
 \end{itemize}
+
 Notice that two of these behaviors could be restated as physical properties and envisioned as data fields, not methods:
 \begin{itemize}
 \item Shapes have an area
 \item Shapes have a bounding box
 \end{itemize}
-This way of thinking is restricting.  Both properties can be computed from other inescapable properties of a Shape. More importantly, committing to representation via data means committing to a specific implementation.  If area is something returned by a shape, then we have not committed ourselves to any one means of achieving that return value. This same principle underlies the usage of basic getters and setters. By restricting access to data fields to methods, to abstractions, then you're not committing to any one representation of that data. 
+Both properties can be computed from other inescapable properties of a Shape\sidenote{radius,width,height, etc}, and so  they are also secondary attributes. If they were fixed fields, then they'd need to be computed after the appropriate primary attributes were given. More importantly, committing to representation via data, making these fixed fields not computed values, means committing to a specific implementation.  If area is something returned by a shape, then we have not committed ourselves to any one means of achieving that return value. This same principle underlies the usage of basic getters and setters. By restricting access to data fields to methods, to abstractions, then you're not committing to any one representation of that data. 
 
-What we're seeing is our first \textsc{class hierarchy}.  When a set of classes can be viewed as subsets of some larger, logical class, then we can create a \textsc{class union} by identifying the expected behavioral interface for all members of that union. 
+The combination of the Shape type with the concrete variants Dots, Rectangles, and Circles, is our first \textsc{class hierarchy}.  When a set of classes can be viewed as subsets of some larger, logical class, then we can create a \textsc{class union} by identifying the expected behavioral interface for all members of that union. Defining types purely in terms of an interface\sidenote{the public methods} is an important mode of thinking to work in. It affords you maximum implementation flexibility by specifying what makes a type a type without committing to any interface. It gives rise to a whole school of OO design and analysis in which you \textit{program to interfaces, not implementations}. Clearly you must eventually implement something, but recognizing the ability to first establish a concrete abstraction like the interface and then implement that interface in a variety of ways is game changer. 
 
 
 \section{From Hierarchy Design to Java Implementation}
 
-A class union defined solely in terms of object behavior\sidenote{methods} is defined using a Java \textit{interface}. An interface provides a series of method declarations and documentation. The intent is quite clear: define the type by it's expected interface. Concrete instances of that type, i.e. the subclasses of the union, then declare that they \textit{implement} that interface\sidenote{Interface-based types can also be subtypes of a union.  In this case the subtype interface \textit{extends} its supertype}.  Classes can implement any number of interfaces in Java. Once a class declares an interface, then it must either implement that interface or declare unimplemented interface methods as abstract using the \textit{abstract} keyword. This later option forces the class itself to be abstract. We'll learn about abstract methods and classes later. For now, all our unions will be represented by their interface. 
+A class union defined solely in terms of object behavior\sidenote{methods} is defined using a Java \textit{interface}. An interface provides a series of method declarations and documentation. Methods in an interface must always be public and we therefore do not need to specify the access modifier. Concrete instances of that type, i.e. the subclasses of the union, then declare that they \textit{implement} that interface.  Classes can implement any number of interfaces in Java. Once a class declares an interface, then it must implement that interface\sidenote{In the next notes we'll see there is a way around this}.
 
 Before we get to the coding, we'll sketch out a visual diagram of our Class hierarchy using \textbf{UML}\sidenote{Unified Modeling Language}. This lets us write down everything but actual method implementation details. In doing so we see all the ``what'' details of our design without getting bogged down by the ``how''.  This is nice in part because Java doesn't typically let us separate this like we did in C++\sidenote{Header + Implementation}.  It also let's you devise an implementation plan.  Eclipse can do a lot of the coding grunt work for us, but we need to be able to direct it. It can help you implement a design, but I won't do the design work for you. By diagramming your hierarchy, you're writing down your ideas in such a way that doesn't commit you to any code.
 
@@ -151,35 +160,35 @@ link(associationUni)(Dot.sw -- Loc.ne);
 \end{figure}
 \end{empfile}
 
-The class union relationship is captured in java through the \textbf{implements} keyword. This is illustrated in figure \ref{fig:implements}
+The class union relationship is then translated to Java through the \textbf{implements} keyword in the class header line. This is illustrated in figure \ref{fig:implements}.
+
 \begin{figure}
 \begin{lstlisting}
 // In Shape.java
 public interface Shape{
-  // Declarations here...
+  // Method declarations here...
 }
 
 // In Rectangle.java
 public class Rectangle implements Shape{
-  // Definitions here
+  // Data and Method Definitions here
 }
 
 // In Dot.java
 public class Dot implements Shape{
-  // Definitions here
+  // Data and Method Definitions here
 }
 
 // In Circle.java
 public class Circle implements Shape{
-  // Definitions here
+  // Data and Method Definitions here
 }
 \end{lstlisting}
 \label{fig:implements}
 \caption{Connecting Shape Subtypes to their Supertype}
 \end{figure}
 
-
-All interface methods are declared under the interface name. Methods are declared in the following way:
+All interface methods are declared under the interface name. Methods are declared with the following syntax:
 \begin{verbatim}
 name(parameter list) : return type
 \end{verbatim}
@@ -206,12 +215,13 @@ drawObjects(Shp);
 \end{empfile}
 
 
-For classes, we first list the fields under the class name using the following syntax:
+For classes, we first list the data fields under the class name using the following syntax:
 \begin{verbatim}
 name : type
 \end{verbatim}
-Once again, a $+$ or $-$ can be used to designate a field public versus private. Class methods are listed below the fields with the same syntax as interface methods. However, we do not have to restate any methods inherited from a superclass or interface. We will, for the time being, restate the methods from \textit{java.lang.Object} that we're overriding\sidenote{equals,toString,hashCode}. In addition to these methods we'll create two constructors, a default constructor and one to initialize all the fields, as well as a suite of field accesssors and mutators. Figure \ref{fig:Shapes} provides the complete UML diagram for our Shape hierarchy looks like:
+Once again, a $+$ or $-$ can be used to designate a field public versus private. We typically make all data fields private. Doing so forces a layer of abstraction between the abstract behavior, as represented by public methods, and concrete implementation, the private fields and methods. Class methods are listed below the fields with the same syntax as interface methods. However, we do not have to restate any methods inherited from a superclass or interface. We will, for the time being, restate the methods from \textit{java.lang.Object} that we're overriding\sidenote{equals,toString,hashCode}. In addition to these methods we'll create two constructors, a default constructor and one to initialize all the fields, as well as a suite of field accesssors and mutators. In practice you can design whatever interface you need for you class.  The style we're using is pretty standard. So much so that eclipse will write most of it for you.
 
+Figure \ref{fig:Shapes} provides the complete UML diagram for our Shape hierarchy. Take a moment to give it a scan. Look at the classes individually, then examine the containment and union relationships. 
 \begin{empfile}["ln04-shape"]
 \begin{figure*}[ht!]
 \begin{emp}(0,0)
@@ -306,11 +316,9 @@ link(associationUni)(Dot.sw -- Loc.ne);
 \end{figure*}
 \end{empfile} 
 
-There's a lot more to UML diagramming. We're just employing some basics in order to clearly state the core details of our class design.
+There's a lot more to UML diagramming. We're just employing some basics in order to clearly state the core details of our class design. 
 
-
-
-\subsection{Implementation in Java}
+\subsection{Completing the Implementation in Java}
 
 Eclipse has several features that help you to get Classes and Class Hierarchies setup quickly:
 \begin{itemize}
@@ -396,7 +404,133 @@ assertEquals(new Dot(new Loc(0,0)).area(),25.0,0.000001);
 
 This is an entirely new phenomenon for us. The reason is clear, the expression maybe the same but the type of the object referenced by aShape has changed and it's that type that determines which implementation of area is executed. This feature of OOP and class hierarchies is called \textsc{polymorphic method dispatch}\sidenote{aka Dynamic Dispatch}. Recall that the metaphor of operation is message passing. Calling \textit{area} is done by passing a message, or dispatching a message, to the appropriate object which then executes the code. The dispatch described by this expression can takes on many different forms\sidenote{polymorphic} within a single program based on the type of the object referenced by \textit{aShape}.
 
+\section{Examining Eclipse's Code}
 
+You can learn a lot about Java and OOP programming idioms by looking at the Eclipse generated code. It's also worth playing with the different options available to you. Here we'll look at an instance of \textit{equals} and \textit{toString} from the Shape hierarchy to point out some key styles and practices. 
+
+\subsection{\textit{equals} for Circle}
+
+The \textit{equals} method generator really on has one option that isn't purely stylistic and that's one to ``Use \textit{instanceof} to compare types''. We'll start with this option unchecked and briefly discuss the difference when its checked. I always use the blocks in if statements option, you can choose whichever style you prefer. 
+
+What is most important to realize is that the equals generated by Eclipse allows you to compare an instance of your class to \textit{any other datum in Java}. This happens for two reasons. First and foremost all Classes implicitly extend the \textit{java.lang.Object} class\sidenote{more of \textsc{class extension} in the next set of notes} and therefore inherit the type \textit{Object}. That means any object can be passed as input to \textit{equals}. The second reason this equals works on all data is that primitive types can and will get auto-converted to a logically equivalent built in Class through a process called \textit{autoboxing}\sidenote{\url{https://docs.oracle.com/javase/tutorial/java/data/autoboxing.html}}. It's this flexibility and complexity that makes the Java \textit{equals} an interesting method to study. 
+
+The \textit{equals} implementation for \textit{Circle} is a good representative of the \textit{equals} method logic because it has both primitive and Class-based fields. So, combined with the other equals boilerplate, it shows you 
+everything you need to know really. In figure \ref{fig:circeq} we see \textit{equals} for \textit{Circle} as generated by Eclipse.
+
+\begin{figure}
+\begin{lstlisting}
+public boolean equals(Object obj) {
+    // test for address equality
+	if (this == obj) {
+		return true;
+	}
+	// check that obj isn't just null
+	if (obj == null) {
+		return false;
+	}
+	// ensure that obj is a Circle
+	if (getClass() != obj.getClass()) {
+		return false;
+	}
+	// Ok. obj is a Circle. Compare them by fields.	
+	Circle other = (Circle) obj;
+	if (center == null) {
+		if (other.center != null) {
+			return false;
+		}
+	} else if (!center.equals(other.center)) {
+		return false;
+	}
+	if (radius != other.radius) {
+		return false;
+	}
+	return true;
+}
+\end{lstlisting}
+\label{fig:circeq}
+\caption{Eclipse \textit{equals} for \textit{Circle}}
+\end{figure}
+
+This \textit{equals} implementation begins by checking for pointer equality with the \textit{if} on line 3. It then carries out a series of tests that, for the most part, check for conditions that immediately rule out equality. If all of those checks fail, then the argument \textit{obj} must be an equivalent circle. The \textit{if} on line 7 checks to see if the Object reference \textit{obj} is null, if it is then we're comparing an allocated Circle to nothing. These first two conditions clearly illustrate the fact that object variables are really pointer-like references to object values. Testing two variables directly with $==$ compares addresses, just like with C++ pointers. As a reference to object, a variable can also refer to nothing, \textit{null}, and so we must always be wary of using the dot operator of a variable that we cannot guarantee isn't a null reference. 
+
+Once we've dealt with the pointer-like conditions, we move on to the type checking. To be equal to a circle the Object \textit{obj} must be a circle. The \textit{if} statement on line 11 verifies this. Notice that \textit{getClass()} is implicitly \textit{this.getClass()}. This method, inherited from Object, returns the type of the object on which its invoked and so this comparison is only false when \textit{obj} is of type \textit{Circle}. When this is not the case, the method returns false.
+
+When \textit{obj} is a circle we begin the process of verifying that the circle \textit{this} and the Circle \textit{obj} have equivalent field values. To do this we need to stop looking at \textit{obj} as an Object and start looking at it as a \textit{Circle}. On line 15 we type cast \textit{obj} to Circle then assign that value to the Circle variable \textit{other}. The compiler recognizes \textit{other} as a Circle and allows us to access Circle fields and methods through the dot operator and \textit{other}. 
+
+The \textit{if} starting on line 16 checks to see if the contained locations are different and returns false if they are. Because, in general, Object variables might be null, Eclipse does the safe thing and first null checks all of the \textit{center} fields starting with \textit{this.center}\sidenote{again, the \textit{this} is implicit}. Take the time to see how this code covers the standard four cases for two references: both are null, only this.center is null, only other.center is null, neither are null. Finally, when neither are null we hand off the responsible of equality checking to the contained Class \textit{equals} method. This is a vital strategy in managing \textsc{class containment}. As much as possible, let the contained object manage all the computing relative to its own value. A good gut check is if you find yourself selecting a contained object's fields and then computing with that value, step back and see if you can rethink the problem as a method for the contained object and write it as such\sidenote{notice this only works if you can modify the contained class' definition}.
+
+The \textit{if} on line 23 compares the primitive typed fields. These variables store their datum directly, not by reference. That means they cannot be null and a direct comparison with $==$ will compare the actual value, not the address of the value. This case is straight forward and when it fails the method moves on to the final line. All the situations that would make these object not equivalent have been ruled out, and so we return true.
+
+This implementation demonstrates best practices for managing contained objects as well as primitive data. In the later case, we're save to proceed with basic computation. When we're working with objects, we should work through and with that object's interface rather than attempt to select field values and do the work ourselves. The other part of our reality that this code highlights is the fact that variables used to store objects are pointer-like in nature. They can be null and their direct comparison is a check on sameness\sidenote{as in same address} not value equality. 
+
+Had we selected to use \textit{instanceof}, then rather than comparing types with \textit{getClass} we'd be checking the type of \textit{obj} with the instanceof operator as shown in figure \ref{fig:instanceof}
+\begin{figure}
+\begin{lstlisting}
+if( !(obj instanceof Circle) ){
+	return false;
+}
+\end{lstlisting}
+\label{fig:instanceof}
+\caption{Type checking with \textit{instanceof}}
+\end{figure}
+The big difference here is that \textit{instanceof} will return true of the object on the left is from the class on the right \textit{or one of its subclasses}. If in the future we extended Circle somehow and \textit{obj} was an instance of that subclass, then this code wouldn't recognize that the most specific, descriptive type of obj didn't directly match that of \textit{this}. This may or may not be significant depending on the problem and classes. We'll stick to the \textit{getClass()} style to avoid the potential problem.
+
+\subsection*{The many faces of \textit{toString}}
+
+The only option for \textit{toString} generation that we need to look at right now is \textit{Code Style}. The four options you can choose from really highlight some old ideas as well as some newer OO ideas.
+
+The first option is the purely functional one. By using the immutable String class as shown in figure \ref{fig:tSwithString} we can often write a simple one liner. What's important to notice is the the value of \textit{center} and \textit{radius} are implicitly converted to strings. In the case of \textit{center}, this is done through the Loc class' \textit{toString} method. This auto-conversion of value makes generating strings\sidenote{and similarly output on System.out or a stream} easy. 
+\begin{figure}[!ht]
+\begin{lstlisting}
+public String toString() {
+	return "Circle [center=" + center + ", radius=" + radius + "]";
+}
+\end{lstlisting}
+\label{fig:tSwithString}
+\caption{\textit{toString} using Strings}
+\end{figure}
+
+If functional programming isn't your thing, then you can use the mutable string class \textit{StringBuilder} and construct the string via a series of append mutations as seen in figure \ref{fig:tSwithStrBuild}. Notice we still get the auto-conversion of non-String values to strings. 
+\begin{figure}[!ht]
+\begin{lstlisting}
+public String toString() {
+	StringBuilder builder = new StringBuilder();
+	builder.append("Circle [center=");
+	builder.append(center);
+	builder.append(", radius=");
+	builder.append(radius);
+	builder.append("]");
+	return builder.toString();
+}
+\end{lstlisting}
+\label{fig:tSwithStrBuild}
+\caption{\textit{toString} with StringBuilder}
+\end{figure}
+
+If the stop and go, multi-statement style of figure \ref{fig:tSwithStrBuild} isn't your thing, then you can \textsc{chain method calls} together and do all the appends in a single statement as seen in figure \ref{fig:tSwithStrBuild2}. 
+\begin{figure}[!ht]
+\begin{lstlisting}
+public String toString() {
+	StringBuilder builder = new StringBuilder();
+	builder.append("Circle [center=").append(center).append(", radius=").append(radius).append("]");
+	return builder.toString();
+}
+\end{lstlisting}
+\label{fig:tSwithStrBuild2}
+\caption{\textit{toString} with StringBuilder and chained calls}
+\end{figure}
+This third style merits some closer examination as it exposes a useful style for OOP mutators that we're likely to employ soon. Go look at the documentation for StringBuilder's append\sidenote{\url{https://docs.oracle.com/javase/7/docs/api/java/lang/StringBuilder.html}}. It returns a StringBuilder. What this code shows us is that the returned StringBuilder is the freshly modified StringBuilder on the left side of the dot operator. This works efficiently because of the pointer-like nature of Java object variables. The return value of the mutation is effectively the address of the modified object. The subsequent method call then acts on the same object rather than a copy. In C++ we accomplish this declaring a reference-type return value using \& then return \textit{*this} at the end of the method. In Java we'll have to jump through significantly fewer syntactic hoops. 
+
+The final option uses format strings which have their roots back in Fortran. To read all about format strings you need to look at the documentation for the Formatter class\sidenote{\url{https://docs.oracle.com/javase/7/docs/api/java/util/Formatter.html}}. This style of string construction is useful to know because it lets you control things like the width of printed values, the number of decimal places, and many other things that we previously managed with stream manipulators in C++. We'll return to this topic later, so do take some time to go through the Formatter documentation and learn about format strings. 	
+\begin{figure}[!ht]
+\begin{lstlisting}
+public String toString() {
+	return String.format("Circle [center=%s, radius=%s]", center, radius);
+}
+\end{lstlisting}
+\label{fig:tSwithFormat}
+\caption{\textit{toString} with printf style Formatting}
+\end{figure}
 
 
 
