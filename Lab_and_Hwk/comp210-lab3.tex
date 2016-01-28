@@ -1,0 +1,31 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{hyperref}
+
+\title{COMP210 - Lab 3}
+\author{}
+\date{ Spring 2016}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+In the third lab and homework you'll be \textit{refactoring}\sidenote{\url{https://en.wikipedia.org/wiki/Code_refactoring}} your design from homework 2 to include the use of abstract classes and class extension. You can use your solution to homework 2 or the one given by the instructor\sidenote{see /home/comp210/sp16/} to complete this assignment.
+\end{abstract}
+
+\section*{Lab3}
+
+Your goal for the lab is to redraw the UML diagram\sidenote{the pdf is also on the server} for a new class hierarchy design that lifts all of the shared media file implementation into an abstract class called \textit{AbstractMediaFile}. For the sake of clarity, restate all Media interface methods in the class in which it can/will be implemented. Anything implemented in \textit{AbstractMediaFile} doesn't need to be restated in the concrete Media types. Put another way, you should propagate interface methods down the hierarchy until it's implemented. 
+
+If by the end of lab you haven't shown the instructor your updated diagram, then do so to get lab credit\sidenote{You should probably be checking your progress as you go though...}.
+
+\section*{Hwk3}
+
+\begin{center}
+\textbf{Submit as \textit{hwk3} via handin no later than 1pm on 2/3}
+\end{center}
+
+Now refactor the the code to meet the new design. Do not modify your lab 2 code directly, but instead work off a copy of the project. To copy an existing project in Eclipse you can highlight the project, hit Ctrl-C to copy, then hit Ctrl-V to ``paste'' the project. You'll be given the option to rename the project at this point.\sidenote{You might still want to rename packages}. In theory, you should not need to modify any of the concrete Media type tests as the change that we're making is to the implementation and not the overall interface.\sidenote{we're changing \textit{How} not \textit{What}}. If and when tests need to be rewritten, then you should think about whether or not you're re-factoring isn't also redesigning the overall interface. The example code from lecture notes 5 should act as a good guide for this exercise.
+
+
+\end{document}
