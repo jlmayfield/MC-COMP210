@@ -1,0 +1,401 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{emp}
+\usepackage{ifpdf,graphicx}
+\ifpdf
+  \DeclareGraphicsRule{*}{mps}{*}{}
+\fi
+\usepackage{listings}
+\usepackage{color}
+\usepackage{pdflscape}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\empprelude{input metauml}
+ 
+\title{COMP 210 - Lecture Notes - 05 - Class Extension}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+In these notes we address class extension and implementation inheritance. In doing so we'll learn about \textit{abstract} and \textit{final} classes in Java and the use of the \textit{protected} and default access modifiers. 
+\end{abstract}
+
+\section{Shared Implementation and Class Extension}
+
+When designing and implementing class unions it is not uncommon to find that several variants in the union have some shared implementation. For example, all the classes in our \textit{Shape} union from lecture notes 4 had a \textit{Loc} field. What's more the \textit{distanceTo} and \textit{moveTo} methods were dependent only on the location field and therefore looked the same in each variant in the union. This kind of repetition is a sure sign that our design could be improved by some abstraction.
+
+In some sense the use of a contained object, the Loc, protects us from some repetition. If the core logic for the repeated methods is done by Loc, then the implementation of those methods at the Shape level can be a simple call to the appropriate Loc method. This also means that changes to the core implementation of that method need only take place in a single location, the implementation within \textit{Loc}.  These points are all well and good, but they don't prevent the repetition of code across the hierarchy. 
+
+The real fix to this problem comes from a new kind of Class relationship: \textsc{Class Extension}. When one class extends another then a hierarchy is established in the same fashion as interface implementation. The extender, called the \textsc{subclass} is a specific variant of the extendee, the \textsc{superclass}. Increased specification comes from overriding behavior or adding functionality and not through hiding or restricting existing implementation. In the case of shapes, we'd like to extract all the pin location details up into a more generic \textit{AbstractShape} so that we can then extend that class with the elements unique to each shape. 
+
+The AbstractShape class is halfway between an interface and a concrete class like Rectangle. It captures concrete implementation details, i.e. that all shapes contain a pin location and \textit{distanceTo} and \textit{moveTo} can be completely specified in this context, and in that way is like the concrete shape classes.  On the other hand, an AbstractShape is a less specified, more generic type we can associate with our class union.\sidenote{The AbstractShape type is the union of Dot, Rectangle, and Circle}. 
+
+\subsection{The Old Shape Hierarchy}
+
+Recall our previous design as diagrammed in figure \ref{fig:ln4uml}. Here we've repeated class method declarations to indicate the point of actual implementation. We see evidence of shared implementation in this design by the repeated containment relationship with \textit{Loc} and the repetition of location related functionality. The repetition of the interface declarations is not necessarily evidence of shared implementation\sidenote{it obviously means shared behavior!}. Only if the implementation of an interface method is based solely on shared implementation will we be able to abstract it out of the concrete classes. 
+
+\begin{empfile}["ln05-oldshape"]
+\begin{figure*}[ht!]
+\begin{emp}(0,0)
+
+Interface.Shp("Shape")
+("+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle",
+ "+distanceTo(Loc l) : double",
+ "+moveTo(Loc l) : void");
+classStereotypes.Shp("<<interface>>");
+
+Class.Dot("Dot")
+("-pinloc : Loc")
+("+Dot()",
+ "+Doc(Loc l)",
+ "+getLocation() : Loc",
+ "+setLoccation(Loc l) : void",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String",
+ "+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle",
+  "+moveTo(Loc l) : void",
+ "+distanceTo(Loc l) : double");
+
+Class.Rec("Rectangle")
+("-pinloc : Loc","+width : int","+height : int")
+("+Rectangle()",
+ "+Rectangle(Loc l, int width, int height)",
+ "+getWidth() : int",
+ "+setWidth(int width) : void",
+ "+getHeight() : int",
+ "+setHeight(int height) : void",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String",
+ "+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle",
+  "+moveTo(Loc l) : void",
+ "+distanceTo(Loc l) : double");
+
+Class.Circ("Circle")
+("-pinloc : Loc","+radius : int")
+("+Circle()",
+ "+Circle(Loc l, int radius)",
+ "+getLocation() : Loc",
+ "+setLoccation(Loc l) : void",
+ "+getRadius() : int",
+ "+setRadius(int radius) : void",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String",
+ "+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle",
+ "+moveTo(Loc l) : void",
+ "+distanceTo(Loc l) : double");
+
+Class.Loc("Loc")
+("+row : int","+col : int")
+("+Loc()",
+ "+Loc(int row, int col)", 
+ "+getRow() : int",
+ "+setRow(int row) : void",
+ "+getCol() : int",
+ "+setCol(int col) : void",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String");
+ 
+
+topToBottom(40)(Shp,Circ);
+topToBottom(50)(Circ,Loc);
+leftToRight(40)(Rec,Circ,Dot);
+
+
+drawObjects(Shp,Rec,Circ,Dot,Loc);
+link(inheritance)(Rec.ne -- Shp.sw);
+link(inheritance)(Circ.n -- Shp.s);
+link(inheritance)(Dot.nw -- Shp.se);
+
+link(associationUni)(Rec.se -- Loc.nw);
+link(associationUni)(Circ.s -- Loc.n);
+link(associationUni)(Dot.sw -- Loc.ne);
+
+\end{emp}
+\caption{Shapes Class Hierarchy}
+\label{fig:ln4uml}
+\end{figure*}
+\end{empfile} 
+
+
+\subsection{A New Shape Hierarchy}
+
+If we go and lift out all of the shared implementation from the Shape hierarchy and place it in the \textit{AbstractShape} abstract class, then we'd end up with the design diagrammed in figure \ref{fig:withabsshp}. Once again, \textit{Shape} interface methods are restated in the class in which they are implemented. With that in mind, we can see that some of the interface methods can be implemented in the abstract class and some cannot. This lack of a complete implementation of the interface is precisely what makes the class abstract in this case. 
+
+
+\begin{empfile}["ln05-absshape"]
+\begin{figure*}[ht!]
+\begin{emp}(0,0)
+
+Interface.Shp("Shape")
+("+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle",
+ "+distanceTo(Loc l) : double",
+ "+moveTo(Loc l) : void");
+classStereotypes.Shp("<<interface>>");
+
+AbstractClass.AbShp("AbstractShape")
+("-pinloc : Loc")
+("#AbstractShape()",
+ "#AbstractShape(Loc l)",
+ "+getLocation() : Loc",
+ "+setLoccation(Loc l) : void",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String",
+ "+moveTo(Loc l) : void",
+ "+distanceTo(Loc l) : double");
+classStereotypes.AbShp("<<abstract>>");
+
+Class.Dot("Dot")
+()
+("+Dot()",
+ "+Doc(Loc l)",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String",
+ "+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle");
+
+Class.Rec("Rectangle")
+("+width : int","+height : int")
+("+Rectangle()",
+ "+Rectangle(Loc l, int width, int height)",
+ "+getWidth() : int",
+ "+setWidth(int width) : void",
+ "+getHeight() : int",
+ "+setHeight(int height) : void",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String",
+ "+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle");
+
+Class.Circ("Circle")
+("+radius : int")
+("+Circle()",
+ "+Circle(Loc l, int radius)",
+ "+getRadius() : int",
+ "+setRadius(int radius) : void",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String",
+ "+area() : double" ,
+ "+isWithin(Loc l)) : boolean",
+ "+boundingBox() : Rectangle");
+
+Class.Loc("Loc")
+("+row : int","+col : int")
+("+Loc()",
+ "+Loc(int row, int col)",
+ "+getRow() : int",
+ "+setRow(int row) : void",
+ "+getCol() : int",
+ "+setCol(int col) : void",
+ "+equals(Object obj) : boolean",
+ "+hashCode() : int",
+ "+toString() : String");
+ 
+
+topToBottom(40)(Shp,AbShp);
+topToBottom(40)(AbShp,Circ);
+leftToRight(40)(Rec,Circ,Dot);
+leftToRight(50)(Loc,AbShp);
+
+drawObjects(Shp,AbShp,Rec,Circ,Dot,Loc);
+link(inheritance)(AbShp.n -- Shp.s);
+link(inheritance)(Rec.ne -- AbShp.sw);
+link(inheritance)(Circ.n -- AbShp.s);
+link(inheritance)(Dot.nw -- AbShp.se);
+link(associationUni)(AbShp.w -- Loc.e);
+
+\end{emp}
+\caption{Shapes with an Abstract Class}
+\label{fig:withabsshp}
+\end{figure*}
+\end{empfile} 
+
+\section{Abstract Methods and Classes in Java}
+
+The keyword \textit{abstract} can be applied to methods and Classes in Java. An abstract method is a method without an implementation, it's simply a declaration. All the methods declared in an Interface are implicitly \textit{abstract} and public. Figure \ref{fig:absarea} shows how you could rewrite the declaration of the \textit{area} method to include these implicit keyword\sidenote{as a matter of style, we don't do this}. 
+
+\begin{figure}[!ht]
+\begin{lstlisting}
+//in Shape.java
+abstract public double area();
+\end{lstlisting}
+\label{fig:absarea}
+\caption{Complete declaration of \textit{area} in \textit{Shape}}
+\end{figure}
+
+An abstract class is a class with abstract methods. That's it. These methods can either be introduced by the class or, as is the case in our example, the abstract methods are interface methods that still lack an implementation. If you're working from the perspective of lifting out shared implementation, then it's likely you'll end up with an abstract class. An important feature of abstract classes is that you cannot directly construct objects of that type. It's a compile time error. The reason for this is simple. As an abstract class its implementation is necessarily incomplete. Some of the methods are abstract. This means the compiler cannot guarantee that a all the methods in that class can be executed. Just like procedural C++ code can't compile without definitions for declared procedures, Java code will not compile if you attempt to instantiate an object from a class with undefined or abstract methods. 
+
+To declare a class abstract simply tack in the \textit{abstract} keyword as shown in figure \ref{fig:absclass}. Eclipse has a checkbox for \textit{abstract} in the New Class wizard.
+
+\begin{figure}[!ht]
+\begin{lstlisting}
+//in AbstractShape.java
+public abstract class AbstractShape implements Shape{
+  // Field and Method declaration will go here. 
+}
+\end{lstlisting}
+\label{fig:absclass}
+\caption{Stub Declaration of the \textit{AbstractShape} abstract class}
+\end{figure}
+
+Finally, to indicate class extension we use the \textit{extends} keyword prior to the interface declarations. Figure \ref{fig:newcircle} shows the new Circle class definition header line. Technically, the interfaces of the superclass are inherited by the subclass, so the redeclaration of Shape isn't needed, but OK if you need to remind yourself its there. 
+
+\begin{figure}[!ht]
+\begin{lstlisting}
+//in Circle.java
+public class Circle extends AbstractShape implements Shape{
+  // Field and Method declaration will go here. 
+}
+\end{lstlisting}
+\label{fig:newcircle}
+\caption{New header line for the \textit{Circle} class}
+\end{figure}
+
+\section{Access Modifiers and Class Extension}
+
+As we start using abstract classes and inheritance hierarchies involving class extensions, we'll need to think more closely about the access modifiers.  Thus far \textit{public} has been used for the the user-facing parts of our design. The stuff that we need to solve our problem. The \textit{private} modifier has been used to hide implementation details like object data fields and occasionally helper methods. 
+
+These basic permissions still apply between subclass and superclass. The private elements of a superclass are not accessible to the subclass or anywhere else. Public methods and fields in a supper class are not only accessible within the subclass but can be access outside of the hierarchy through the subclass. So while \textit{AbstractShape} will contain the implementation of \textit{distanceTo}, we can still invoke that method from an object of type Circle. After all, all subclass are also instances of their superclass with added functionality. 
+
+\begin{figure}[!ht]
+\begin{lstlisting}
+Circle acirc = new Circle(new Loc(5,2),4,3);
+// even though there is no listed 
+... acirc.distanceTo(new Loc()) ...
+\end{lstlisting}
+\label{fig:supercall}
+\caption{Superclass public method invocation from subclass objects}
+\end{figure}
+
+Essentially what happens is when a method is invoked on an object, the runtime system first checks the object's class for an implementation. If none is found, the superclass is checked and so on up the hierarchy. Eventually an implementation will be found. To see why, consider the fact that you cannot instantiate an object if it's class is abstract and that any class with unimplemented methods must either declare those methods abstract or implement them before the code can compile. So, the only way to compile and instantiate an instance of a class is if you're dealing with a concrete class in which all declared methods are implemented. While its not always easy to predict which implementation gets executed, it is guaranteed that an implementation exists. 
+
+There is a middle ground between \textit{public} and \textit{private}. If you'd like a method or field to be accessible within a subclass but not outside of the hierarchy, then it should be declared as \textsc{protected}. In UML this is indicated with a \# symbol\sidenote{which shows up as a partially open lock in the diagram}. Declaring protected access is helpful when fields and methods are needed for subclass implementation and only subclass implementation. In this case, public would open up the fields and methods for access outside the implementation code and private would restrict the fields and methods to the class in which their declared. Protected is exactly the access you'd need. We'll always declare the abstract class constructors as protected because the only place you're allowed to use them is the direct subclass anyway. 
+
+\section{The \textit{super} keyword}
+
+If, within a class method, you wish to refer to the object on which the method was invoked, then you use the keyword \textit{this}. If instead you wish to refer directly to a public or protected field or method from that class' superclass, then you use the keyword \textit{super}.  The most immediate application of this is in constructors. Notice the construct for the Circle class as shown in figure \ref{fig:circctor}.
+
+
+\begin{figure}[!ht]
+\begin{lstlisting}
+public Circle(Loc center, int radius) {
+	super(center);		
+	this.radius = radius;
+}
+\end{lstlisting}
+\label{fig:circlector}
+\caption{Circle construct that invokes the AbstractShape constructor through \textit{super}}
+\end{figure}
+
+The center location is a property of the abstract super class and is therefore initialized by that construct. We can invoke this through \textit{super($\ldots$)}. A more this-like invocation of \textit{super} can be seen in the Eclipse generated \textit{hashCode} for the Shape subclasses as shown in figure \ref{fig:circhash}.
+
+
+\begin{figure}[!ht]
+\begin{lstlisting}
+public int hashCode() {
+	final int prime = 31;
+	int result = super.hashCode();
+	result = prime * result + radius;
+	return result;
+}
+\end{lstlisting}
+\label{fig:circlector}
+\caption{Circle hashCode implementation that invokes super class hashCode constructor through \textit{super}}
+\end{figure}
+
+Notice that rather than initialize \textit{result} to 1, it's initialized to the hash code of the superClass. This captures the hash of the center location and leaves only the radius left to account for. Most importantly, this exposes an important idiom for dealing with superclass. Just like we let contained classes manage their own data, we let superclasses manage their own. You see this again in \textit{equals} as shown in figure \ref{fig:circeq}.
+
+\begin{figure}[!ht]
+\begin{lstlisting}
+public boolean equals(Object obj) {
+	if (this == obj) {
+		return true;
+	}
+	// compare at the superclass level
+	if (!super.equals(obj)) {
+		return false;
+	}
+	// if you get this far, then obj
+	// must be an AbstractShape pinned
+	// to the same place as this
+	
+	if (getClass() != obj.getClass()) {
+		return false;
+	}
+	Circle other = (Circle) obj;
+	if (radius != other.radius) {
+		return false;
+	}
+	return true;
+}
+\end{lstlisting}
+\label{fig:circeq}
+\caption{Circle equals that incorporates proper handling of super class data}
+\end{figure}
+
+When superclass data is private and you wish to incorporate it in your toString output, then  you'll need to explore the \textit{Inherited Methods} menu and select an appropriate constructor as shown in figure \ref{fig:circtostr}.
+
+\begin{figure}[!ht]
+\begin{lstlisting}
+public String toString() {
+	StringBuilder builder = new StringBuilder();
+	builder.append("Circle [radius=");
+	builder.append(radius);
+	builder.append(", center=");
+	// get the location of this actually drops
+	// down the getLocation definied in super
+	builder.append(getLocation());
+	builder.append("]");
+	return builder.toString();
+}
+
+\end{lstlisting}
+\label{fig:circeq}
+\caption{Circle toString that uses the public super accessor}
+\end{figure}
+
+\section{Testing and AbstractClasses}
+
+The good news is that because you cannot directly instantiation objects from your abstract classes then you cannot directly test the class. That's also the bad news. Public methods from the abstract class should be tested in its subclasses. Protected and private methods should be tested implicitly through the subclass public methods. Basically the usual rule of thumb applies: \textit{test the public facing interface}. 
+
+\end{document}
