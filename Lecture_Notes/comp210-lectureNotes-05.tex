@@ -60,7 +60,7 @@ Recall our previous design as diagrammed in figure \ref{fig:ln4uml}. Here we've 
 \begin{emp}(0,0)
 
 Interface.Shp("Shape")
-("+area() : double" ,
+("-area() : double" ,
  "+isWithin(Loc l)) : boolean",
  "+boundingBox() : Rectangle",
  "+distanceTo(Loc l) : double",
@@ -83,7 +83,7 @@ Class.Dot("Dot")
  "+distanceTo(Loc l) : double");
 
 Class.Rec("Rectangle")
-("-pinloc : Loc","+width : int","+height : int")
+("-pinloc : Loc","-width : int","-height : int")
 ("+Rectangle()",
  "+Rectangle(Loc l, int width, int height)",
  "+getWidth() : int",
@@ -100,7 +100,7 @@ Class.Rec("Rectangle")
  "+distanceTo(Loc l) : double");
 
 Class.Circ("Circle")
-("-pinloc : Loc","+radius : int")
+("-pinloc : Loc","-radius : int")
 ("+Circle()",
  "+Circle(Loc l, int radius)",
  "+getLocation() : Loc",
@@ -117,7 +117,7 @@ Class.Circ("Circle")
  "+distanceTo(Loc l) : double");
 
 Class.Loc("Loc")
-("+row : int","+col : int")
+("-row : int","-col : int")
 ("+Loc()",
  "+Loc(int row, int col)", 
  "+getRow() : int",
@@ -192,7 +192,7 @@ Class.Dot("Dot")
  "+boundingBox() : Rectangle");
 
 Class.Rec("Rectangle")
-("+width : int","+height : int")
+("-width : int","-height : int")
 ("+Rectangle()",
  "+Rectangle(Loc l, int width, int height)",
  "+getWidth() : int",
@@ -207,7 +207,7 @@ Class.Rec("Rectangle")
  "+boundingBox() : Rectangle");
 
 Class.Circ("Circle")
-("+radius : int")
+("-radius : int")
 ("+Circle()",
  "+Circle(Loc l, int radius)",
  "+getRadius() : int",
@@ -220,7 +220,7 @@ Class.Circ("Circle")
  "+boundingBox() : Rectangle");
 
 Class.Loc("Loc")
-("+row : int","+col : int")
+("-row : int","-col : int")
 ("+Loc()",
  "+Loc(int row, int col)",
  "+getRow() : int",
@@ -323,7 +323,7 @@ public Circle(Loc center, int radius) {
 	this.radius = radius;
 }
 \end{lstlisting}
-\label{fig:circlector}
+\label{fig:circctor}
 \caption{Circle construct that invokes the AbstractShape constructor through \textit{super}}
 \end{figure}
 
@@ -339,7 +339,7 @@ public int hashCode() {
 	return result;
 }
 \end{lstlisting}
-\label{fig:circlector}
+\label{fig:circhash}
 \caption{Circle hashCode implementation that invokes super class hashCode constructor through \textit{super}}
 \end{figure}
 
@@ -390,7 +390,7 @@ public String toString() {
 }
 
 \end{lstlisting}
-\label{fig:circeq}
+\label{fig:circtostr}
 \caption{Circle toString that uses the public super accessor}
 \end{figure}
 

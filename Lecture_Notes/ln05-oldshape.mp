@@ -10,7 +10,7 @@ w := 0*LaTeX_unitlength;
 h := 0*LaTeX_unitlength;
 
 Interface.Shp("Shape")
-("+area() : double" ,
+("-area() : double" ,
  "+isWithin(Loc l)) : boolean",
  "+boundingBox() : Rectangle",
  "+distanceTo(Loc l) : double",
@@ -33,7 +33,7 @@ Class.Dot("Dot")
  "+distanceTo(Loc l) : double");
 
 Class.Rec("Rectangle")
-("-pinloc : Loc","+width : int","+height : int")
+("-pinloc : Loc","-width : int","-height : int")
 ("+Rectangle()",
  "+Rectangle(Loc l, int width, int height)",
  "+getWidth() : int",
@@ -50,7 +50,7 @@ Class.Rec("Rectangle")
  "+distanceTo(Loc l) : double");
 
 Class.Circ("Circle")
-("-pinloc : Loc","+radius : int")
+("-pinloc : Loc","-radius : int")
 ("+Circle()",
  "+Circle(Loc l, int radius)",
  "+getLocation() : Loc",
@@ -67,7 +67,7 @@ Class.Circ("Circle")
  "+distanceTo(Loc l) : double");
 
 Class.Loc("Loc")
-("+row : int","+col : int")
+("-row : int","-col : int")
 ("+Loc()",
  "+Loc(int row, int col)",
  "+getRow() : int",
