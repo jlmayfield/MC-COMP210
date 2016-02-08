@@ -1,0 +1,133 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{emp}
+\usepackage{ifpdf,graphicx}
+\ifpdf
+  \DeclareGraphicsRule{*}{mps}{*}{}
+\fi
+\usepackage{listings}
+\usepackage{color}
+\usepackage{pdflscape}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\empprelude{input metauml}
+ 
+\title{COMP 210 - Lab 5 and Homework 5}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This week we'll work out solving the puzzle problem from last week. For homework \textit{before lab} you'll get all the classes and interface stubbed out so that you can jump right into the implementation work in lab. 
+\end{abstract}
+
+\section{Homework 4}
+
+\begin{center}
+\textbf{Due by the start of lab on 2/11}
+\end{center}
+
+Start a new Java project in Eclipse and stub out the class hierarchy shown in figure \ref{fig:hwk5}. Use Eclipse to generate default constructors, field initializing constructors, getters, setters, equals, hashCode, and toString for each class.  We'll likely comeback and make some of these private as we narrow down our design in class, but we'll start with the basics and scale back as needed\sidenote{We're likely to identify some Group methods in class prior to lab, those should be added and stubbed out as well}. Submit your java code as assignment \textit{hwk5} using handin.
+
+\begin{empfile}["hwk5"]
+\begin{figure*}[ht]
+\begin{center}
+\begin{emp}[](0,0)
+
+Class.pState("PuzzleState")
+("-flight : Flashlight",
+ "-people : Group")
+();
+
+
+Class.Pson("Person")
+("-speed : int","-int : id","-isOnA : boolean")
+();
+
+Class.Flight("Flashlight")
+("-batleft : int",
+ "-isonA : boolean")
+();
+
+Interface.iGrp("Group")
+();
+classStereotypes.iGrp("<<interface>>");
+
+Class.aGrp("ArrayGroup")
+("-people : Person[*]")
+();
+
+Class.lGrp("ListGroup")
+("-people : PList")
+();
+
+Interface.plst("PList")
+();
+classStereotypes.plst("<<interface>>");
+
+Class.mtplst("MTPList")
+()
+();
+
+Class.cplst("ConsPList")
+("-fst : Person","-rst : PList")
+();
+
+iGrp.ne = pState.sw + (0,-30);
+Flight.nw = pState.se + (20,-30);
+aGrp.ne = iGrp.sw + (-20,-30);
+lGrp.nw = iGrp.se + (20,-30);
+cplst.ne = plst.sw + (-10,-30);
+mtplst.nw = plst.se + (10,-30);
+
+%topToBottom(30)(iGrp,lGrp);
+topToBottom(50)(aGrp, Pson);
+%leftToRight(30)(aGrp,lGrp);
+topToBottom(30)(lGrp,plst);
+%topToBottom(30)(plst,cplst);
+%leftToRight(30)(cplst,mtplst);
+drawObjects(pState,Flight,lGrp,Pson,iGrp,aGrp,plst,mtplst,cplst);
+
+link(inheritance)(lGrp.nw -- iGrp.s);
+link(inheritance)(aGrp.ne -- iGrp.s);
+link(associationUni)(pState.s -- iGrp.ne);
+link(associationUni)(pState.s -- Flight.nw);
+link(associationUni)(aGrp.s -- Pson.n);	
+link(associationUni)(cplst.w -- Pson.e );
+link(associationUni)(cplst.nw -- plst.sw );
+link(associationUni)(plst.n -- lGrp.s );
+link(inheritance)(cplst.n -- plst.s);
+link(inheritance)(mtplst.n -- plst.s);
+
+\end{emp}
+\caption{A Framework for Exploring the Puzzle Problem}
+\label{fig:hwk5}
+\end{center}
+\end{figure*}
+\end{empfile}
+
+\section{Lab 5}
+
+Work towards implementing the core functionality for the puzzle problem that we worked out in class Wednesday. Focus your efforts on the list-based Group implementation.
+
+\end{document}
