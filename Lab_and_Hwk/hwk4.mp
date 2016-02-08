@@ -1,4 +1,4 @@
-%%% "hwk5".mp -- do not edit, generated automatically by comp210-lab5.tex
+%%% "hwk4".mp -- do not edit, generated automatically by comp210-lab5.tex
 verbatimtex
 \documentclass [10pt]{article}
 \begin {document}
