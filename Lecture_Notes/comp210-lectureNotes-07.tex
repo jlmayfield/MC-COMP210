@@ -1,0 +1,192 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{emp}
+\usepackage{ifpdf,graphicx}
+\ifpdf
+  \DeclareGraphicsRule{*}{mps}{*}{}
+\fi
+\usepackage{listings}
+\usepackage{color}
+\usepackage{pdflscape}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\empprelude{input metauml}
+ 
+\title{COMP 210 - Lecture Notes - 07 - Data Structures, ADTs, and PDAs}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+In these notes we explore the paradigm of designing Procedural Data Abstractions\sidenote{William R. Cook. 1990. Object-Oriented Programming Versus Abstract Data Types. In Proceedings of the REX School/Workshop on Foundations of Object-Oriented Languages, J. W. de Bakker, Willem P. de Roever, and Grzegorz Rozenberg (Eds.). Springer-Verlag, London, UK, UK, 151-178.} and defining recursively structured data.  In their current state these notes are woefully incomplete. For a more complete treatment of basic recursive structures see chapters 5 and 15 in HtDC\cite{htdc}. For a deeper look at abstractions in this context look at chapters 18 and 19. 
+\end{abstract}
+
+\section{Lists and Procedural Data Abstractions}
+
+Lists are the classic example of a data structure with a recursive structure. A list comes in two varieties: empty and not empty. The empty list is a primitive structure with no contained fields/data. A non-empty list, which we'll call a cons list borrowing from the Lisp/Scheme tradition, has two fields. The first field is a singular instance of the type contained in a list.\sidenote{For lists of integers, it's an integer, for a list of Strings, it's strings.} The second field is a pointer/reference to another list.  It is this second field that creates a recursive structure: cons lists are composed of a single datum and another list. 
+
+In an object-oriented space we can represent this structure using a class union and containment. Nothing new is happening, we're just making use of existing tools in a new and highly fruitful way. The raw structure of a list of Foo objects is given in figure \ref{fig:ln7list}. In practice, the Foo class could be a primitive value, an interface-based type, or any other more concrete/descriptive type than ``Foo''. 
+
+\begin{empfile}["ln7-list"]
+\begin{figure*}[ht!]
+\begin{emp}(0,0)
+
+Interface.lst("List")
+();
+classStereotypes.lst("<<interface>>");
+
+Class.mt("MTList")
+()
+();
+
+Class.cons("ConsList")
+("fst : Object","rst : List")
+();
+
+Class.obj("Foo")
+()();
+
+mt.ne = lst.sw + (-10,-30);
+cons.nw = lst.se + (10,-30);
+leftToRight(20)(cons,obj);
+drawObjects(lst,mt,cons,obj);
+
+link(inheritance)(mt.n -- lst.s);
+link(inheritance)(cons.n -- lst.s);
+link(associationUni)(cons.n -- lst.se);
+link(associationUni)(cons.e -- obj.w);
+
+\end{emp}
+\caption{A List of Foo Objects}
+\label{fig:ln7list}
+\end{figure*}
+\end{empfile} 
+
+By embedding the recursive structure in containment and inheritance we can get the system to manage the necessary ``is this list empty or not'' conditionals as part of the Polymorphic method dispatch. 
+
+
+\section{ADT Lists}
+
+The recursive structure given above is really a low level implementation choice. If you need a list or list like container you should be working with an Abstract Data Type and then using the OO list structure as the implementation. In figure \ref{fig:ln7adtlist} we see the structure for a basic ADT list with a linked-list implementation.
+
+\begin{empfile}["ln7-adtlist"]
+\begin{figure}[ht!]
+\begin{emp}(0,0)
+
+Class.adtlst("ADTList")
+("-lst : List")
+();
+
+Interface.lst("List")
+();
+classStereotypes.lst("<<interface>>");
+
+Class.mt("MTList")
+()
+();
+
+Class.cons("ConsList")
+("fst : Object","rst : List")
+();
+
+Class.obj("Foo")
+()();
+
+topToBottom(20)(adtlst,lst);
+mt.ne = lst.sw + (-10,-30);
+cons.nw = lst.se + (10,-30);
+leftToRight(20)(cons,obj);
+drawObjects(adtlst,lst,mt,cons,obj);
+
+link(inheritance)(mt.n -- lst.s);
+link(inheritance)(cons.n -- lst.s);
+link(associationUni)(cons.n -- lst.se);
+link(associationUni)(cons.e -- obj.w);
+link(associationUni)(adtlst.s -- lst.n);
+
+\end{emp}
+\caption{An ADT List of Foo Objects}
+\label{fig:ln7adtlist}
+\end{figure}
+\end{empfile} 
+
+This works perfectly well when you're certain that the linked-list implementation provides the performance characteristics you need. In the event that these characteristics are unknown or that you simply want to plan for a more flexible future then we want to inject some interfaces into this picture. In figure \ref{fig:ln7multlistimp} we see a more robust ADT list structure that defines the main type through an interface and then sets down two possible implementations: one with an array and one with a linked-list.
+
+\begin{empfile}["ln7-multilist"]
+\begin{figure*}[ht!]
+\begin{emp}(0,0)
+
+Interface.adtlst("ADTList")
+();
+
+Class.llst("LinkedList")
+("-lst : List")
+();
+
+Class.alst("ArrayList")
+("- lst : Foo[*]")
+();
+
+Interface.lst("List")
+();
+classStereotypes.lst("<<interface>>");
+
+Class.mt("MTList")
+()
+();
+
+Class.cons("ConsList")
+("fst : Object","rst : List")
+();
+
+Class.obj("Foo")
+()();
+
+llst.ne = adtlst.sw + (-20,-30);
+alst.nw = adtlst.se + (20,-30);
+topToBottom(20)(llst,lst);
+mt.ne = lst.sw + (-10,-30);
+cons.nw = lst.se + (10,-30);
+leftToRight(20)(cons,obj);
+drawObjects(llst,alst,adtlst,lst,mt,cons,obj);
+
+link(inheritance)(mt.n -- lst.s);
+link(inheritance)(cons.n -- lst.s);
+link(associationUni)(cons.n -- lst.se);
+link(associationUni)(cons.e -- obj.w);
+link(inheritance)(llst.n -- adtlst.s);
+link(inheritance)(alst.n -- adtlst.s);
+link(associationUni)(alst.s -- obj.n);
+link(associationUni)(llst.s -- lst.n);
+
+\end{emp}
+\caption{An ADT List of Foo Objects}
+\label{fig:ln7multlistimp}
+\end{figure*}
+\end{empfile} 
+
+The key observation to make about figure \ref{fig:ln7multlistimp} is that \textit{different implementations form a class Union}. 
+
+\bibliographystyle{plain}
+\bibliography{htdc}
+\end{document}
