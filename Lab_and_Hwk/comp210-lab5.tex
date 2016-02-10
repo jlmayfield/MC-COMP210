@@ -1,4 +1,4 @@
-\documentclass[]{tufte-handout}
+\documentclass[nobib]{tufte-handout}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{emp}
 \usepackage{ifpdf,graphicx}
@@ -31,14 +31,14 @@
 }
 
 \empprelude{input metauml}
- 
+
 \title{COMP 210 - Lab 5 and Homework 4}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-This week we'll work out solving the puzzle problem from last week. For homework \textit{before lab} you'll get all the classes and interface stubbed out so that you can jump right into the implementation work in lab. 
+This week we'll work out solving the puzzle problem from last week. For homework \textit{before lab} you'll get all the classes and interface stubbed out so that you can jump right into the implementation work in lab.
 \end{abstract}
 
 \section{Homework 4}
@@ -116,7 +116,7 @@ link(inheritance)(lGrp.nw -- iGrp.s);
 link(inheritance)(aGrp.ne -- iGrp.s);
 link(associationUni)(pState.s -- iGrp.ne);
 link(associationUni)(pState.s -- Flight.nw);
-link(associationUni)(aGrp.s -- Pson.n);	
+link(associationUni)(aGrp.s -- Pson.n);
 link(associationUni)(cplst.w -- Pson.e );
 link(associationUni)(cplst.nw -- plst.sw );
 link(associationUni)(lGrp.s -- plst.n);
