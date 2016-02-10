@@ -45,14 +45,21 @@ In these notes we explore the paradigm of designing Procedural Data Abstractions
 
 Lists are the classic example of a data structure with a recursive structure. A list comes in two varieties: empty and not empty. The empty list is a primitive structure with no contained fields/data. A non-empty list, which we'll call a cons list borrowing from the Lisp/Scheme tradition, has two fields. The first field is a singular instance of the type contained in a list.\sidenote{For lists of integers, it's an integer, for a list of Strings, it's strings.} The second field is a pointer/reference to another list.  It is this second field that creates a recursive structure: cons lists are composed of a single datum and another list. 
 
-In an object-oriented space we can represent this structure using a class union and containment. Nothing new is happening, we're just making use of existing tools in a new and highly fruitful way. The raw structure of a list of Foo objects is given in figure \ref{fig:ln7list}. In practice, the Foo class could be a primitive value, an interface-based type, or any other more concrete/descriptive type than ``Foo''. 
+In an object-oriented space we can represent this structure using a class union and containment. Nothing new is happening, we're just making use of existing tools in a new and highly fruitful way. The raw structure and a standard interface for a list of Foo objects is given in figure \ref{fig:ln7list}. Although it might not be clear why just yet adding a mutable interface to Lists isn't possible with this design\sidenote{what happens when you remove the only item from a size one list?}. 
 
 \begin{empfile}["ln7-list"]
 \begin{figure*}[ht!]
 \begin{emp}(0,0)
 
 Interface.lst("List")
-();
+("+isEmpty() : boolean",
+ "+first() : Foo",
+ "+rest() : List",
+ "+contains(Foo key) : boolean",
+ "+prepend(Foo fst) : List",
+ "+append(Foo last) : List",
+ "+concatenate(List end) : List" 
+ );
 classStereotypes.lst("<<interface>>");
 
 Class.mt("MTList")
@@ -60,7 +67,7 @@ Class.mt("MTList")
 ();
 
 Class.cons("ConsList")
-("fst : Object","rst : List")
+("fst : Foo","rst : List")
 ();
 
 Class.obj("Foo")
@@ -82,12 +89,153 @@ link(associationUni)(cons.e -- obj.w);
 \end{figure*}
 \end{empfile} 
 
-By embedding the recursive structure in containment and inheritance we can get the system to manage the necessary ``is this list empty or not'' conditionals as part of the Polymorphic method dispatch. 
+In practice, the Foo class could be a primitive value, an interface-based type, or any other more concrete/descriptive type than ``Foo''. By embedding the recursive structure in containment and inheritance we can get the system to manage the necessary ``is this list empty or not'' conditionals as part of the Polymorphic method dispatch. Implementing the interface across this union is an exercise in Procedural Data Abstraction\sidenote{see Cook's paper}. 
 
+The \textit{first} method, as seen in figure \ref{fig:consfst}, is very straight forward for cons lists as it's really just a field selector. 
+\begin{figure}[!ht]
+\begin{lstlisting}
+// in ConsList
+@Override
+public Foo first(){
+	return this.fst;
+}
+
+// in ConsList test file
+@Test
+public void testFirst(){
+	assertEquals(new Foo(),new ConsList(new Foo(), new MtList()));
+}
+\end{lstlisting}
+\label{fig:consfst}
+\caption{first for cons lists}
+\end{figure}
+
+
+On the other hand, figure \ref{fig:mtfst} shows that first for empty lists is an error. There is no first to select when there is nothing in the list. Using a generic RuntimeException is not ideal, but works. In practice you should probably extend RuntimeExecption to create a custom exception type for List errors. When testing exceptions we need to add an argument to the annotation and then simply invoke code that should throw the exception listed in the annotation.
+
+\begin{figure}
+\begin{lstlisting}
+// in MtList
+@Override
+public Foo first(){
+	throw new RuntimeException("Cannot select the first of an empty list");
+}
+
+// in MtList test file
+@Test(expected= RuntimeException.class)
+public void testFirst(){
+	new MtList().first();
+}
+\end{lstlisting}
+\label{fig:mtfst}
+\caption{first for empty lists}
+\end{figure}
+
+
+The prepend function is also fairly straight forward. 
+
+\begin{figure}
+\begin{lstlisting}
+// in ConsList
+@Override
+public List prepend(Foo fst){
+	return new ConsList(fst,this);
+}
+
+// in ConsList test file
+@Test
+public void testPrepend(){
+
+	List l = new ConsList(new Foo(b),new MTList());
+	assertEquals(new ConsList(new Foo(a),new ConsList(new Foo(b),new MTList())),
+		l.prepend(new Foo(a));
+}
+
+\end{lstlisting}
+\caption{prepend for cons lists}
+\end{figure}
+
+\begin{figure}
+\begin{lstlisting}
+// in MtList
+@Override
+public List prepend(){
+	return new Conslist(fst,this);
+}
+
+// in MtList test file
+@Test
+public void testPrepend(){
+	List l = new ConsList(new Foo(b),new MTList());
+	assertEquals(new ConsList(new Foo(a),new MTList()),
+		new MTList().prepend(new Foo(a)));
+}
+\end{lstlisting}
+\label{fig:listpre}
+\caption{prepend for empty lists}
+\end{figure}
+
+Concatenate is, at first, a bit tricky as we must be certain we account for the two possible List subclasses that \textit{end} could be. The problem, in general, has four logical cases: both are empty, this is empty while end is not, end is empty while this is not, and neither is empty. While polymorphic method dispatch fully determines the type of \textit{this}, it does nothing relative to the argument types.\sidenote{some OOP languages will dispatch based off argument types. this is called \textsc{Multiple Dispatch}.} It's up to us to manage the two sub-cases relative to the type of this. 
+
+In the case of concatenate, we find that the logic when end is empty and when it's not empty can be unified into a single case for both non-empty and empty this. Figure \ref{fig:conscat} shows the implementation for cons lists and figure \ref{fig:mtcat} shows it for empty lists.
+
+\begin{figure}
+\begin{lstlisting}
+// in ConsList
+@Override
+public List concatenate(List end){
+	
+	return new ConsList(this.first(), this.rest().concatenate(end));
+	
+}
+
+// in ConsList test file
+@Test
+public void testConcat(){
+	List l = new ConsList(new Foo(a),new ConsList(new Foo(c),new MTList()));
+	List r = new ConsList(new Foo(b),new MTList());
+	
+	assertEquals(new ConsList(new Foo(a),
+					new ConsList(new Foo(c),
+						new ConsList(new Foo(b),						
+							new MTList()))),
+				l.concatenate(r));
+	
+	assertEquals(l,l.concatenate(new MTList());
+
+}
+
+\end{lstlisting}
+\label{fig:conscat}
+\caption{concatenate for cons lists}
+\end{figure}
+
+\begin{figure}
+\begin{lstlisting}
+
+// in MtList
+@Override
+public List concatentate(List end){
+	return end;
+}
+
+// in MTList test file
+@Test
+public void testConcat(){
+	assertEquals(new MTList(), new MTList().concatenate(new MTList()));
+	
+	assertEquals(new ConsList(new Foo(),new MTList()),
+	   new MTList().concatenate(new ConsList(new Foo(), new MTList())));
+
+}
+\end{lstlisting}
+\label{fig:mtcat}
+\caption{concatenate for empty lists}
+\end{figure}
 
 \section{ADT Lists}
 
-The recursive structure given above is really a low level implementation choice. If you need a list or list like container you should be working with an Abstract Data Type and then using the OO list structure as the implementation. In figure \ref{fig:ln7adtlist} we see the structure for a basic ADT list with a linked-list implementation.
+The recursive structure given above is really a low level implementation choice. If you need a list or list like container you should be working with an Abstract Data Type and then using the OO list structure as the implementation. In figure \ref{fig:ln7adtlist} we see the structure for a basic ADT list with a linked-list implementation. Notice that the list methods move up to the ADTList class. Now that the List type is implementation we no longer are required to provide the standard list interface. It would make a lot of sense to do so and have ADTList methods make calls to the logically equivalent method on the contained List. On the other hand, we might opt to check the specific type of the list to catch special cases in the List logic. For example, we could skip the call to List concatenate all together if the argument to the ADTList concatenate is empty. Once again, the design space between the implementation and the top-level has opened up some implementation flexibility.
 
 \begin{empfile}["ln7-adtlist"]
 \begin{figure}[ht!]
@@ -95,7 +243,13 @@ The recursive structure given above is really a low level implementation choice.
 
 Class.adtlst("ADTList")
 ("-lst : List")
-();
+("+isEmpty() : boolean",
+ "+first() : Foo",
+ "+rest() : List",
+ "+contains(Foo key) : boolean",
+ "+prepend(Foo fst) : List",
+ "+append(Foo last) : List",
+ "+concatenate(List end) : List" );
 
 Interface.lst("List")
 ();
@@ -137,7 +291,13 @@ This works perfectly well when you're certain that the linked-list implementatio
 \begin{emp}(0,0)
 
 Interface.adtlst("ADTList")
-();
+("+isEmpty() : boolean",
+ "+first() : Foo",
+ "+rest() : List",
+ "+contains(Foo key) : boolean",
+ "+prepend(Foo fst) : List",
+ "+append(Foo last) : List",
+ "+concatenate(List end) : List" );
 
 Class.llst("LinkedList")
 ("-lst : List")

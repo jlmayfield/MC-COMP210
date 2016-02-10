@@ -11,7 +11,13 @@ h := 0*LaTeX_unitlength;
 
 Class.adtlst("ADTList")
 ("-lst : List")
-();
+("+isEmpty() : boolean",
+ "+first() : Foo",
+ "+rest() : List",
+ "+contains(Foo key) : boolean",
+ "+prepend(Foo fst) : List",
+ "+append(Foo last) : List",
+ "+concatenate(List end) : List" );
 
 Interface.lst("List")
 ();

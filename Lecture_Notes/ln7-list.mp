@@ -10,7 +10,14 @@ w := 0*LaTeX_unitlength;
 h := 0*LaTeX_unitlength;
 
 Interface.lst("List")
-();
+("+isEmpty() : boolean",
+ "+first() : Foo",
+ "+rest() : List",
+ "+contains(Foo key) : boolean",
+ "+prepend(Foo fst) : List",
+ "+append(Foo last) : List",
+ "+concatenate(List end) : List"
+ );
 classStereotypes.lst("<<interface>>");
 
 Class.mt("MTList")
@@ -18,7 +25,7 @@ Class.mt("MTList")
 ();
 
 Class.cons("ConsList")
-("fst : Object","rst : List")
+("fst : Foo","rst : List")
 ();
 
 Class.obj("Foo")

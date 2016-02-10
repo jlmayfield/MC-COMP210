@@ -10,7 +10,13 @@ w := 0*LaTeX_unitlength;
 h := 0*LaTeX_unitlength;
 
 Interface.adtlst("ADTList")
-();
+("+isEmpty() : boolean",
+ "+first() : Foo",
+ "+rest() : List",
+ "+contains(Foo key) : boolean",
+ "+prepend(Foo fst) : List",
+ "+append(Foo last) : List",
+ "+concatenate(List end) : List" );
 
 Class.llst("LinkedList")
 ("-lst : List")
