@@ -12,20 +12,22 @@ h := 0*LaTeX_unitlength;
 Class.pState("PuzzleState")
 ("-flight : Flashlight",
  "-people : Group")
-();
+("+canCross() : boolean");
 
 
 Class.Pson("Person")
 ("-speed : int","-int : id","-isOnA : boolean")
-();
+("+getSpeed() : int");
 
 Class.Flight("Flashlight")
 ("-batleft : int",
  "-isonA : boolean")
-();
+("+getBatLeft() : int");
 
 Interface.iGrp("Group")
-();
+("+totalTime() : int",
+ "+findFastest() : Person",
+ "+size() : int");
 classStereotypes.iGrp("<<interface>>");
 
 Class.aGrp("ArrayGroup")
@@ -37,7 +39,9 @@ Class.lGrp("ListGroup")
 ();
 
 Interface.plst("PList")
-();
+("+totalTime() : int",
+ "+findFastest() : Person",
+ "+size() : int");
 classStereotypes.plst("<<interface>>");
 
 Class.mtplst("MTPList")
@@ -70,7 +74,7 @@ link(associationUni)(pState.s -- Flight.nw);
 link(associationUni)(aGrp.s -- Pson.n);
 link(associationUni)(cplst.w -- Pson.e );
 link(associationUni)(cplst.nw -- plst.sw );
-link(associationUni)(plst.n -- lGrp.s );
+link(associationUni)(lGrp.s -- plst.n);
 link(inheritance)(cplst.n -- plst.s);
 link(inheritance)(mtplst.n -- plst.s);
 
