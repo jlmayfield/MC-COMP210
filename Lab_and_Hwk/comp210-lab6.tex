@@ -53,7 +53,7 @@ For this lab you'll start working up to the top of the PuzzleState problem with 
 Your goal for lab is to complete PuzzleState such that you can properly test \textit{canCross} on a variety of puzzles. Towards this end you must implement some new elements to our design:
 \begin{itemize}
 \item A \textsc{static Factory method} called \textit{createInitialState}\sidenote{Factories build things. This method build instances of the class in which they're defined} for constructing the initial state given the flashlight's battery power and the speed of all the people stored in an array. 
-\item A mutator method for Puzzle State that that sets the implementation to be used by the factory. The default can be either array or list. An enumeration type\sidenote{\url{https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html}} \textit{GroupImp} is used to enumerate the implementation options and a private static field is required to store the current implementation preference. 
+\item A mutator method for Puzzle State that that sets the implementation to be used by the factory. The default can be either array or list. An enumeration type\sidenote{\url{https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html}} \textit{GroupImp} is used to enumerate the implementation options and a private static field\sidenote{\url{https://docs.oracle.com/javase/tutorial/java/javaOO/classvars.html}} is required to store the current implementation preference. 
 \item A Group selector for PuzzleStates.  
 \end{itemize}
 
@@ -73,7 +73,7 @@ For homework you'll implement a basic CLI-based UI for our program. We'll consid
 \end{enumerate} 
 In both cases the result of canCross is reported to the standard output in a descriptive manner\sidenote{something like, ``this puzzle is solvable'' would suffice}. 
 
-Notice the first option takes a single argument and the second takes at least two. This should allow us to easily differentiate which case we're dealing with without using special flags like we typically see at the CLI. Completing this program gives us further practice with Arrays\sidenote{\url{}} while also giving us a chance to work with CLI arguments\sidenote{\url{https://docs.oracle.com/javase/tutorial/essential/environment/cmdLineArgs.html}} and File I/O\sidenote{\url{https://docs.oracle.com/javase/tutorial/essential/io/scanning.html}}.  While we can certainly design a class or two to assist with the UI logic, for now we'll just cram it all in the \textit{main} or PuzzleState. 
+Notice the first option takes a single argument and the second takes at least two. This should allow us to easily differentiate which case we're dealing with without using special flags like we typically see at the CLI. Completing this program gives us further practice with Arrays\sidenote{\url{https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html}} while also giving us a chance to work with CLI arguments\sidenote{\url{https://docs.oracle.com/javase/tutorial/essential/environment/cmdLineArgs.html}} and File I/O\sidenote{\url{https://docs.oracle.com/javase/tutorial/essential/io/scanning.html}}.  While we can certainly design a class or two to assist with the UI logic, for now we'll just cram it all in the \textit{main} or PuzzleState. 
 
 
 
@@ -159,7 +159,7 @@ drawObjects(pState,GImp,Flight,lGrp,Pson,iGrp,aGrp,plst,mtplst,cplst);
 link(inheritance)(lGrp.nw -- iGrp.s);
 link(inheritance)(aGrp.ne -- iGrp.s);
 link(inheritance)(cplst.n -- plst.s);
-link(inheritance)(mtplst.n -- plst.s);
+link(inheritance)(mtplst.n -- plst.s); 	
 link(associationUni)(pState.w -- GImp.e);
 link(associationUni)(pState.s -- iGrp.ne);
 link(associationUni)(pState.s -- Flight.nw);
