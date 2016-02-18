@@ -53,8 +53,8 @@ For this lab you'll start working up to the top of the PuzzleState problem with 
 Your goal for lab is to complete PuzzleState such that you can properly test \textit{canCross} on a variety of puzzles. Towards this end you must implement some new elements to our design:
 \begin{itemize}
 \item A \textsc{static Factory method} called \textit{createInitialState}\sidenote{Factories build things. This method build instances of the class in which they're defined} for constructing the initial state given the flashlight's battery power and the speed of all the people stored in an array. 
-\item A mutator method for Puzzle State that that sets the implementation to be used by the factory. The default can be either array or list. An enumeration type\sidenote{\url{https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html}} \textit{GroupImp} is used to enumerate the implementation options and a private field is required to store the current implementation preference. 
-\item A Group selector. 
+\item A mutator method for Puzzle State that that sets the implementation to be used by the factory. The default can be either array or list. An enumeration type\sidenote{\url{https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html}} \textit{GroupImp} is used to enumerate the implementation options and a private static field is required to store the current implementation preference. 
+\item A Group selector for PuzzleStates.  
 \end{itemize}
 
 
@@ -91,12 +91,12 @@ The UML diagram has been updated based on this week's tasks and the solution to 
 Class.pState("PuzzleState")
 ("-flight : Flashlight",
  "-people : Group",
- "-impType : GroupImp")
+ static "-impType : GroupImp")
 ("-PuzzleState()",
  "-PuzzleState(Flashlight, Group)",
  "+canCross() : boolean",
- "+setGroupImplementation(GroupImp) : void",
  "+getGroup() : Group",
+ static "+setGroupImplementation(GroupImp) : void",
  static "+createInitialState(int flighttime, int[] speeds) : PuzzleState",
  static "+main(String[] args) : void");
 
@@ -158,6 +158,8 @@ drawObjects(pState,GImp,Flight,lGrp,Pson,iGrp,aGrp,plst,mtplst,cplst);
 
 link(inheritance)(lGrp.nw -- iGrp.s);
 link(inheritance)(aGrp.ne -- iGrp.s);
+link(inheritance)(cplst.n -- plst.s);
+link(inheritance)(mtplst.n -- plst.s);
 link(associationUni)(pState.w -- GImp.e);
 link(associationUni)(pState.s -- iGrp.ne);
 link(associationUni)(pState.s -- Flight.nw);
@@ -165,8 +167,7 @@ link(associationUni)(aGrp.s -- Pson.n);
 link(associationUni)(cplst.w -- Pson.e );
 link(associationUni)(cplst.nw -- plst.sw );
 link(associationUni)(lGrp.s -- plst.n);
-link(inheritance)(cplst.n -- plst.s);
-link(inheritance)(mtplst.n -- plst.s);
+
 
 \end{emp}
 \caption{A Framework for Exploring the Puzzle Problem}
