@@ -1,0 +1,51 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{hyperref}
+\usepackage{framed}
+
+\title{COMP210 - Project 1}
+\author{}
+\date{Spring 2016}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+For this project you'll be implementing a basic Huffman encoder/decoder program. 
+\end{abstract}
+
+\section{The Program}
+
+For your first project you are to develop a CLI program that enables basic Huffman encoding and decoding for messages that contain alphabetic characters only. The program works exclusively through files and has three modes of use.  The first mode is to compute a Huffman code for a given document and write that code to another file. This option is invoked by the argument \textit{-c}. If the program executable were named huff, then \textit{huff -c mymessage.txt mycode.txt} would read the message from the file \textit{mymessage.txt}, compute the Huffman code for that document, and write the code to the file \textit{mycode.txt}. The second mode doesn't stop at computing the Huffman code but instead goes on to write the complete message and it's code to a file. The command \textit{huff -e mymessage.txt compressedmsg.txt} would compute the Huffman code for the message found in mymessage.txt and then write that code and the compressed message to \textit{compressedmsg.txt}. The final mode of operation decodes a previously encoded message. The command \textit{huff -d compressedmsg.txt decodedmsg.txt} would read the code and encoded message from compressedmsg.txt and then reproduce the original message in decodedmsg.txt. These three command formats are summarized in figure \ref{fig:cmds}.
+\begin{figure}
+\begin{verbatim}
+huff -c MESSAGEFILE CODEFILE
+huff -e MESSAGEFILE ENCODEDMESSAGEFILE
+huff -d ENCODEDMESSAGE DECODEDMESSAGEFILE
+\end{verbatim}
+\caption{Three Commands for the Huffman Program}
+\label{fig:cmds}
+\end{figure}
+
+\subsection{File Format for the Compressed Message}
+
+We're going to skip the actual compression part and instead simply write a string of the characters 1 and 0 that would get written to memory if we compressed the file. We'll refer to these strings as \textit{binary strings}. The end result will be a larger file since we'll swap one character in the original message for multiple 1s and 0s in the ``compressed'' message. The smallest possible unit that Java will let you read/write from a file is 1 Byte. If you want to attempt the actual compression, then you'd have to combine all the bits, possibly pad it to get an exact multiple of 8, and then break that message up on byte boundaries. You're more then welcome to give this a go, but it is not required. If you're the least bit interested in actual compression programs, this would be a good place to get started.   
+
+Writing the code itself should be done by writing the tree. Your goal is to write a linear representation of the tree as a single line of text so that when decoding occurs you can first reconstruct the tree through a linear scan of that line of text. Given that our messages contain only alphabetic characters, we can use comma separated values to write our tree and differentiate leaf nodes from non-leaf nodes by writing a character like \textit{*} for non-leaf nodes. The end result is a single line of \textit{*} and letters separated by commas. We'll discuss algorithms for doing this with our Huffman trees in class, but it ultimately boils down to choosing the right traversal pattern and working it through some recursive I/O.  
+
+All told, we have the file format for encoded/compressed messages shown in figure \ref{fig:encodefile}. This file consists of two lines, the first is the tree as comma separated characters and the second is the binary string that represents the compressed message. 
+
+\begin{figure}
+\begin{verbatim}
+COMMASEPARTEDCHARACTERS
+BINARYSTRING
+\end{verbatim}
+\caption{Encoded/Compressed Message format}
+\label{fig:encodefile}
+\end{figure}
+
+\section{Logistics}
+
+The project is \textbf{due by end of day Friday 3/18}. Submit the source code via \textit{handin} as assignment \textit{proj1} and submit a UML diagram for your code. The UML will be accepted as late as Monday 3/21 but should ideally be submitted on Friday 3/18.   Grades are based on the completeness and correctness of the program, the documentation, the tests, and the overall quality of the design. Tests should minimally cover the main public facing interface of the program. In the event of an incomplete project, submissions that are more thoroughly tested with jUnit tests can expect to receive better grades than those with minimal testing. 
+
+\end{document}
