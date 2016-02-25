@@ -53,7 +53,29 @@
 
 \begin{enumerate}
 
-\item You first set of problems deal with using trees to develop codes for an 8 letter alphabet consisting of \textit{a} through \textit{h}.
+\item Table \ref{tab:code} provides a variable-length, prefix-free code for a five letter alphabet. 
+\begin{table}[!htpb]
+\begin{center}
+\begin{tabular}{cccccc}
+letter    & a & b & c & d &  e \\
+code & 010 &  00 & 10 &  011 & 11
+\end{tabular}
+\end{center}
+\caption{An five letter alphabet with variable length codes}
+\label{tab:code}
+\end{table}
+
+For this code you need to:
+\begin{itemize}
+\item Draw the binary tree that represents this code. 
+\item Encode the message \textit{adedbbc} with the code. 
+\item Decode the message 0110101000 with this code. 
+\end{itemize}
+\newpage \thispagestyle{empty}
+\mbox{}
+\newpage \thispagestyle{empty}
+
+\item The following set of problems deal with using trees to develop codes for an 8 letter alphabet consisting of \textit{a} through \textit{h}.
 \begin{enumerate}
 \item Construct a fixed length, binary code for this alphabet that uses the least number of bits per possible and draw the binary tree that represents that code. As a ``bonus'' see if you can figure out how many possible fixed length codes with this same length you could have for this language.
 \newpage \thispagestyle{empty}
