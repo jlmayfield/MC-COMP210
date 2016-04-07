@@ -1,0 +1,62 @@
+\documentclass[]{tufte-handout}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{hyperref}
+
+\title{COMP210 - Project 2 - Conway's Game of Life}
+\author{}
+\date{Spring 2016}
+
+\begin{document}
+\maketitle
+
+
+\begin{abstract}
+John Conway's \textit{Game of Life}\sidenote{\url{http://en.wikipedia.org/wiki/Conway's\_Game\_of\_Life}} is a classic programming problem and your second and final project for this course.
+\end{abstract}
+
+\section{The Game}
+
+Game of Life is very well documented on its wikipedia page and we've discussed it in some detail in class.  The game is built from a two dimensional universe of cells that live or die each turn based on a very simple set of rules.  While the game might seem very simple, it is actual a Turing-Equivalent model of computation.  This means that with the right population of cells and the right variation of the rules, Game of Life can compute anything that modern computers can compute.  This means you could, in theory, implement your Game of Life project using the Game of Life. Don't worry, you don't have to rebuild the entire corpus of computing with your final project; we'll stick to Java.  
+
+\subsection{\textit{Your} Game}
+
+The minimum requirements for your implementation of Game of Life are:
+\begin{itemize}
+\item Maximize population size while maintaining a playable game. 
+\item Players should be able to stop and start the game whenever they like.
+\item While the game is stopped, players should be able to modify the current population of cells.
+\item While the game is going, the game should display the number of iterations since the last stop or since the last player intervention with the population.  So, if the player stops and starts the game without killing or resurrecting any cells, then the count should not change. 
+\end{itemize}  
+In addition to the minimal functionality, you are expected to add one or more features that enhance the game. Some possibilities are:
+\begin{itemize}
+\item The ability to add predefined patterns like gliders
+\item The ability to set the initial population from a text file.
+\item Random populations.
+\item Mutation: cells have a non-zero probability of switching states regardless of the state of their neighbors. This changes the game, so you should probably the user to turn it on/off in case they want the traditional deterministic game.
+\item The ability to zoom in and out on portions of the population. This is likely to include scrolling while viewing the population as well.
+\item Visually engaging and usable UI. Consider adding things like help text and in-game guides.
+\end{itemize}
+
+
+\section{Evaluation}
+
+Your project will be evaluated on the following criteria:
+\begin{enumerate}
+\item Utilizing Good MVC based design
+\item Robust unit testing 
+\item Coding style, documentation, and human readability.
+\item Effective use of Java Libraries
+\item Meeting the minimum requirements
+\item Exceeding the minimum requirements
+\end{enumerate}
+A moderately well done program that completely meets the minimum requirements can expect a passing grade in the C range.  A superbly well done program that meets the minimum requirements can expect something in the C+/B- range.  Grades beyond that level will require enhancements to the basic game described above. 
+
+\section{Dates}
+
+\begin{itemize}
+\item Lab on 4/21 and 4/28 will be dedicated to project work.
+\item Complete set of unit-tests for the model due by class time\textbf{Wednesday 4/25}. Submit as \textbf{proj2quiz}
+\item \textbf{Due on Monday 5/2. Submit as \textit{proj2} via handin}
+\end{itemize}
+
+\end{document}
