@@ -1,0 +1,40 @@
+\documentclass[nobib]{tufte-handout}
+\usepackage{amsmath,amssymb,amsthm}
+
+  
+\title{COMP 210 - Lab 10}
+\date{Spring 2016}
+
+\begin{document} 
+\maketitle
+
+\begin{abstract}
+For this lab you'll work a basic toy problem utilizing the custom painting/graphics capabilities of swing components.
+\end{abstract}
+
+\section{Assignment}
+
+\begin{center}
+\textbf{Due by Wednesday 4/20. Submit with handin as \textit{lab10}}
+\end{center}
+
+The tutorial examples for custom painting and graphics\sidenote{\url{https://docs.oracle.com/javase/tutorial/uiswing/painting/index.html}} for JComponents walk you through a problem that is surprisingly close to some basic functionality you need for your final project. In this program squares are drawn where users click the mouse. For your lab you need to adapt this program in two ways:
+\begin{enumerate}
+\item Adapt the program so that squares are drawn on a discrete 5x5 grid of squares. Squares should be 20x20 pixels so the total ``canvas'' is 100x100 pixels. New squares are only drawn if the user clicks within a grid square other than the one currently painted. Only one square is painted at a time. 
+\item Do the program in MVC style:
+\begin{itemize}
+\item \textit{Model} Logical location of the currently drawn square. This means row and column coordinates in the range $[0,25)$. 
+\item \textit{View} Just the panel
+\item \textit{Controller} Mouse press event handler
+\end{itemize}
+\end{enumerate}
+The key here is managing the logical model of the grid versus the actual squares drawn.  You should be able to increase the size of grid squares without changing the model in any way. 
+
+\subsection{Optional Extensions}
+
+\begin{enumerate}
+\item Re-clicking the drawn location takes the square off the grid. This means it's possible no square will be drawn and requires a new model
+\item Leave squares on once they're drawn.  This means storing the location of all the squares to be drawn or keeping the complete state of the grid and a new model.
+\end{enumerate}
+\end{document}
+

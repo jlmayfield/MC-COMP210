@@ -1,0 +1,49 @@
+\documentclass[nobib]{tufte-handout}
+\usepackage{amsmath,amssymb,amsthm}
+
+  
+\title{COMP 210 - Lab 9}
+\date{Spring 2016}
+
+\begin{document} 
+\maketitle
+
+\begin{abstract}
+For this lab you'll work a basic toy problem utilizing the javax.swing.Timer class.
+\end{abstract}
+
+\section{Assignment}
+
+\begin{center}
+\textbf{Due by Wednesday 4/20. Submit with handin as \textit{lab9}}
+\end{center}
+
+Your goal is to understand the basic usage of the javax.swing.Timer class\sidenote{\url{http://docs.oracle.com/javase/7/docs/api/javax/swing/Timer.html} or the tutorial \url{http://docs.oracle.com/javase/tutorial/uiswing/misc/timer.html}}. Towards that end, you must implement a simple GUI program with the following features:
+\begin{enumerate}
+\item A button, or two buttons, that starts and stops a timer.
+\item Text that displays the number of times the timer ticked since started. This should reset when the timer is restarted. Not when it's stopped, but when it's started. If you start and stop the timer, the text should display the total number of ticks.
+\end{enumerate} 
+
+Do this program in MVC style:    
+\begin{itemize}
+\item \textit{Model} Boolean that's true if the timer is going, false if not and an integer that tracks the number of ticks.
+\item \textit{View} Text to display ticks, button(s)
+\item \textit{Controller(s)} Timer listener to handle ticks.  Button listener(s) for start/stop.
+\end{itemize}
+
+Layout the components however you wish with whatever LayoutManager you want.
+
+\subsection{Optional Extensions}
+
+Once you've completed that much, you might consider the following additions to your program.
+\begin{itemize}
+\item If you didn't do so in the first version, use a single button to start and stop
+\item Use radio buttons for start/stop rather than a standard button
+\item Add the ability to increase or decrease the timer speed. Consider playing with multiple interfaces for this functionality: radio buttons for discrete speed options, a slider for a more fine-grained spectrum, or buttons to increase and decrease. 
+\end{itemize}
+
+When lab is complete, submit your source code as \textit{lab9} using \textit{handin}.
+
+
+\end{document}
+
