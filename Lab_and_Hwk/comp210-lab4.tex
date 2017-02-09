@@ -1,68 +1,36 @@
-\documentclass[]{tufte-handout}
+\documentclass[nobib]{tufte-handout}
 \usepackage{amsmath,amssymb,amsthm,color}
 \usepackage{multirow}
 \usepackage{booktabs}
 \usepackage[pdftex]{graphicx}
 
-  
-\title{COMP 210 - Lab 4}
-\date{Spring 2016}
 
-\begin{document} 
+\title{COMP 210 \\ Lab 4}
+\date{Spring 2017}
+
+\begin{document}
 \maketitle
 
 \begin{abstract}
-For this lab you'll practice designing class hierarchies and documenting your design with UML. No Java is necessary for this lab. You are encouraged, but not required, to implement your designs for practice and study. You never know when they might come back around on a quiz, exam, or project. 
+In this lab we'll continue work on our functional binary tree design from class. To let us focus on trees we'll design a Binary tree of String objects.
 \end{abstract}
 
-%% Exercises in Section 6.1 of HTDC (pp 66)
-% pp 34, 6.2 --> Manhattan 
-% 3.1 (pp 37), 6.4 --> Real Estate
-% *6.5 --> GUI
-% *6.9 --> Bridge Puzzle World State
-% *requires Container Types
+Begin by stubbing out the hierarchy containing a BinTree interface, AbstractNode abstract class, and MTTree, Leaf, and TreeNode concrete classes. For each class include:
+\begin{itemize}
+  \item \textit{private} default constructors and by-field constructors. Abstract classes should use protected constructors.
+  \item public static factory methods for object construction\sidenote{further discussion in lab}
+  \item Accessors for each field. No mutators.
+  \item equals and hashCode methods
+  \item toString
+\end{itemize}
 
-%% Exercises in 14.2 (pp 152)
-% 14.7 --> Grocery Items
-% 14.8 --> Discount Books
+The interface should initially include the following methods\sidenote{see lecture notes 8 if you need a refresher on these }:
+\begin{itemize}
+  \item A method for computing tree size
+  \item A method for computing tree height
+  \item A method which fills an array\sidenote{\url{https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html}} of the Strings with the Strings contained in the tree in the order they'd be visited by an inorder traversal. Your design for this method should allow users to use a pre-allocated array and not require any extra arrays to be allocated in memory.
+\end{itemize}
 
+Lab time should be used for documenting, declaring, stubbing, and developing tests for the above listed methods. When that is complete or at the end of lab, use handin to submit your work as \textit{lab4}. Implementation should then be completed for assignment \textit{hwk4} which is due by \textbf{Monday 2/13}.
 
-\section{Lab 4}
-
-Below are two problems for which you need to work up hierarchy designs in UML. Take time to explore design options and don't commit to the first design you think of because it's the first design you think of.  The first problem is fairly straight forward. The second starts to push us towards where we're going next in that it requires something you've encountered in programming but have not yet encountered in Java. Take a crack at it and see what you can come up with.    
-
-When drawing up your UML you do not need to re-declare superclass/interface methods in subclasses. You do, however,need to declare the constructors, getters, and setters you'll want and need so that it's clear if you're working with a data abstraction or a straight ahead implementation. Finally, you must account for any helper/auxiliary methods that are clearly needed for the problem. 
-
-\subsection*{Problem 1}
-
-Your first problem is an expanded version of problem 14.8 from from HtDC\citep{htdc}. 
-
-\begin{figure}
-\begin{quote}
-You're part of a team developing a program that assists managers of discount bookstores. The program must keep a record for each book and it's your job to design the hierarchy needed to represent books in the program. A book's record must include its title, the author's name, the author's birth date, the book's price, and its publication year. There are three kinds of books each with a different pricing policy. Hardcover books are sold at 20\% off. Books on the sale table are 50\% off. Paperbacks are sold at list price. You must be able to compute the sale price of a book as well as the age of the author when the book was published. Additionally, you should be to determine if one book is cheaper than another, if two books were written by the same author, if one book was published before another book, and if the author of one book was older than another book at the time the respective books were published. 
-\end{quote}
-\caption{Problem 1: The Bookstore}
-\end{figure}
-
-
-\subsection*{Problem 2}
-
-Your second problem is a slight expansion of problem 14.8 from from HtDC\citep{htdc}. 
-
-\begin{figure}
-\begin{quote}
-6.9 Consider the following puzzle:
-\begin{quote}
-$\ldots$ A number of people want to cross a dilapidated bridge at night. Each person requires a different amount of time to cross the bridge. Together they have one battery-powered flashlight. Only two people can be on the bridge at any given time, due to its bad state of repair. Given the composition of the group and the life-time of the battery,
-the problem is to determine whether and how the entire group can cross the bridge $\ldots$
-\end{quote}
-Solving the puzzle (manually or with a program) requires a recording of what happens as members of the group moves back and forth across the river. Let's call the status of the ``puzzle world'' after each individual crossing a state. 
-Design a class hierarchy to represent the states of the puzzle. Which elements does a state have to record? What is the initial state for this problem? What is the final state for this problem? Express them in your representation. Finally, propose some methods that could be used to solve or assist in solving the puzzle.
-\end{quote}
-\caption{Problem 2: HtDC problem 6.9}
-\end{figure}
-
-
-\bibliographystyle{plain}
-\bibliography{htdc}
 \end{document}
