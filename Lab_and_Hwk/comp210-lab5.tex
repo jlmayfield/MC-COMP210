@@ -3,7 +3,7 @@
 \usepackage{emp}
 \usepackage{ifpdf,graphicx}
 \ifpdf
-  \DeclareGraphicsRule{*}{mps}{*}{}
+\DeclareGraphicsRule{*}{mps}{*}{}
 \fi
 \usepackage{listings}
 \usepackage{color}
@@ -32,106 +32,29 @@
 
 \empprelude{input metauml}
 
-\title{COMP 210 - Lab 5 and Homework 4}
+\title{COMP 210 \\ Lab 5}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-This week we'll work out solving the puzzle problem from last week. For homework \textit{before lab} you'll get all the classes and interface stubbed out so that you can jump right into the implementation work in lab.
+This week we'll work out some of the implementation for a basic node-based Binary Search Tree. We'll finish up the implementation in class; there is no homework this week due to the take home exam.
 \end{abstract}
-
-\section{Homework 4}
-
-\begin{center}
-\textbf{Due by the start of lab on 2/11}
-\end{center}
-
-Start a new Java project in Eclipse and stub out the class hierarchy shown in figure \ref{fig:hwk4}. Use Eclipse to generate default constructors, field initializing constructors, getters, setters, equals, hashCode, and toString for each class.  We'll likely comeback and make some of these private as we narrow down our design in class, but we'll start with the basics and scale back as needed\sidenote{We're likely to identify some Group methods in class prior to lab, those should be added and stubbed out as well}. Submit your java code as assignment \textit{hwk4} using handin.
-
-\begin{empfile}["hwk4"]
-\begin{figure*}[ht]
-\begin{center}
-\begin{emp}[](0,0)
-
-Class.pState("PuzzleState")
-("-flight : Flashlight",
- "-people : Group")
-("+canCross() : boolean");
-
-
-Class.Pson("Person")
-("-speed : int","-int : id","-isOnA : boolean")
-("+getSpeed() : int");
-
-Class.Flight("Flashlight")
-("-batleft : int",
- "-isonA : boolean")
-("+getBatLeft() : int");
-
-Interface.iGrp("Group")
-("+totalTime() : int",
- "+findFastest() : Person",
- "+size() : int");
-classStereotypes.iGrp("<<interface>>");
-
-Class.aGrp("ArrayGroup")
-("-people : Person[*]")
-();
-
-Class.lGrp("ListGroup")
-("-people : PList")
-();
-
-Interface.plst("PList")
-("+totalTime() : int",
- "+findFastest() : Person",
- "+size() : int");
-classStereotypes.plst("<<interface>>");
-
-Class.mtplst("MTPList")
-()
-();
-
-Class.cplst("ConsPList")
-("-fst : Person","-rst : PList")
-();
-
-iGrp.ne = pState.sw + (0,-30);
-Flight.nw = pState.se + (20,-30);
-aGrp.ne = iGrp.sw + (-20,-30);
-lGrp.nw = iGrp.se + (20,-30);
-cplst.ne = plst.sw + (-10,-30);
-mtplst.nw = plst.se + (10,-30);
-
-%topToBottom(30)(iGrp,lGrp);
-topToBottom(50)(aGrp, Pson);
-%leftToRight(30)(aGrp,lGrp);
-topToBottom(30)(lGrp,plst);
-%topToBottom(30)(plst,cplst);
-%leftToRight(30)(cplst,mtplst);
-drawObjects(pState,Flight,lGrp,Pson,iGrp,aGrp,plst,mtplst,cplst);
-
-link(inheritance)(lGrp.nw -- iGrp.s);
-link(inheritance)(aGrp.ne -- iGrp.s);
-link(associationUni)(pState.s -- iGrp.ne);
-link(associationUni)(pState.s -- Flight.nw);
-link(associationUni)(aGrp.s -- Pson.n);
-link(associationUni)(cplst.w -- Pson.e );
-link(associationUni)(cplst.nw -- plst.sw );
-link(associationUni)(lGrp.s -- plst.n);
-link(inheritance)(cplst.n -- plst.s);
-link(inheritance)(mtplst.n -- plst.s);
-
-\end{emp}
-\caption{A Framework for Exploring the Puzzle Problem}
-\label{fig:hwk4}
-\end{center}
-\end{figure*}
-\end{empfile}
 
 \section{Lab 5}
 
-Work towards implementing the core functionality for the puzzle problem that we worked out in class Wednesday. Focus your efforts on the low-level, list-based Group implementation. If you get that complete, then take a crack at the ArrayGroup implementation\sidenote{\url{https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html}}. 
+Work up the following design by documenting, declaring, stubbing, and writing tests for the following. Use Eclipse to auto-generate
+\begin{enumerate}
+  \item A \textit{BST} interface for a Binary Search tree containing primitive integer type data. The interface should provide an isEmpty predicate, a predicate to check if a specific value is contained in the tree, mutators for insertion and removal of values, and a mutator that will balance the tree. Be sure to utilize and declare exceptions as needed.
+  \item A \texit{NodeBST} class that implements the BST interface using the BinTree type from last week. Make constructors private and provide a static factory method for constructing a search tree from an array of unsorted integers. The factory method will construct an ideally balanced initial tree given the numbers.
+\end{enumerate}
+
+Once the design is setup, turn your attention to the implementation. This time around we will implement NodeBST without making any changes to the BinTree hierarchy. This means adding private helper methods or static procedures to NodeBST rather than functionality to BinTree. For this implementation you are to take a top down approachby doing the following for each NodeBST method:
+\begin{enumerate}
+  \item Analyze the problem and decide if any helpers could be used to make the implementation simpler.
+  \item Declare and stub each helper in the NodeBST class.
+  \item Complete the implementation of the method using the helpers.
+\end{enumerate}
+The goal here is to have a complete enough picture of the specification for each helper than you could complete the method they're helping under the assumption that the helpers work to spec. At the end of lab, submit your work as assignment \textit{lab5}.
 
 \end{document}
