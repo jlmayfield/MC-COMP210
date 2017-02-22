@@ -50,7 +50,9 @@ Begin by laying out the design for a Min-Heap\sidenote{We'll discuss this in cla
 
 A general purpose Min heap can contain any Class of data so long as instances of that class can be compared to one another. Java provides a standard interface for such objects. It's called \textit{Comparable}\sidenote{\url{https://docs.oracle.com/javase/7/docs/api/java/lang/Comparable.html}}.  So, in object-oriented terms, we want to design a Min Heap ADT that works for any implementation of the comparable interface. By designing the Min Heap hierarchy around an interface-based type we reduce the contained type to the minimal functionality required to work within the ADT\@.
 
-This form of generalization has a trade off. Any place we need or want to work in terms the contained type we must do so strictly at the Comparable type level. For example, returning an element of the heap will mean returning a Comparable. At the user level this will mean type casting the returned value to something more specific. Construction and equality testing are also a bit problematic as the most we can say in the implementation is that we have an array of Comparable-typed data.
+This form of generalization has a trade off. Any place we need or want to work in terms the contained type we must do so strictly at the Comparable type level. For example, returning an element of the heap will mean returning a Comparable. At the user level this will mean type casting the returned value to something more specific whenever a basic comparable won't do. Construction and equality testing are also a bit problematic as the most we can say in the implementation is that we have an array of Comparable-typed data. It's also entirely possible to construct heaps from a heterogeneous data types so long as each type is comparable. If this occurs and the contained types aren't comparable to each other\sidenote{i.e. I can compare strings to strings and Integers to Integers but not Integers to Strings} then the heap will break.  We'll work with these shortcomings for now and look for a work around and fixes as we move forward. 
+
+
 
 
 \end{document}
