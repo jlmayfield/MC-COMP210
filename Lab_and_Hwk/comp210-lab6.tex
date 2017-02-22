@@ -32,150 +32,25 @@
 
 \empprelude{input metauml}
 
-\title{COMP 210 - Lab 6 and Homework 5}
+\title{COMP 210 \\ Lab 6 and Homework 5}
 \date{Spring 2016}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-This week we finish our work with the Puzzle State problem by finishing the hierarchy from lab5 and developing a simple CLI interface. A solution to last week's lab and homework can be found on the server if you need or wish to work from it.
+This week's lab and homework combo get you started on project 1. You're goal is to design and implement a general purpose Min Heap implementation.  In lab you'll set down the basic design work. The implementation is homework.
 \end{abstract}
 
-\section{Lab 6}
+\section{Lab 6 \& Homework 5}
 
-\begin{center}
-\textbf{Due by the end of day Friday}
-\end{center}
+Begin by laying out the design for a Min-Heap\sidenote{We'll discuss this in class.}. This means declaring the standard MinHeap interface and implementing that interface on a class that uses an array-based implementation. All code should be properly documented and anything that isn't written for you by Eclipsed should be stubbed. A complete set of tests must be written before implementation begins. Before you start the implementation, submit your design work as assignment \textit{lab6} via handin. Submit the finished program as assignment \textit{hwk5} by class time Wednesday 3/1.
 
-For this lab you'll start working up to the top of the PuzzleState problem with the goal of completing PuzzleState class and there by finishing the hierarchy and a functioning \textit{canCross()} method.  The overall design has been updated and diagrammed in figure (\ref{fig:lab6}). You'll find an implementation of everything on that diagram excluding the PuzzleState in the course directory. 
+\subsection{ Towards Generics }
 
-Your goal for lab is to complete PuzzleState such that you can properly test \textit{canCross} on a variety of puzzles. Towards this end you must implement some new elements to our design:
-\begin{itemize}
-\item A \textsc{static Factory method} called \textit{createInitialState}\sidenote{Factories build things. This method build instances of the class in which they're defined} for constructing the initial state given the flashlight's battery power and the speed of all the people stored in an array. 
-\item A mutator method for Puzzle State that that sets the implementation to be used by the factory. The default can be either array or list. An enumeration type\sidenote{\url{https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html}} \textit{GroupImp} is used to enumerate the implementation options and a private static field\sidenote{\url{https://docs.oracle.com/javase/tutorial/java/javaOO/classvars.html}} is required to store the current implementation preference. 
-\item A Group selector for PuzzleStates.  
-\end{itemize}
+A general purpose Min heap can contain any Class of data so long as instances of that class can be compared to one another. Java provides a standard interface for such objects. It's called \textit{Comparable}\sidenote{\url{https://docs.oracle.com/javase/7/docs/api/java/lang/Comparable.html}}.  So, in object-oriented terms, we want to design a Min Heap ADT that works for any implementation of the comparable interface. By designing the Min Heap hierarchy around an interface-based type we reduce the contained type to the minimal functionality required to work within the ADT\@.
 
-
-The logic behind Factory methods is to abstract away construction details. In this case, the only important details about the initial state are the flashlight's battery power and the speed of each person. Identifiers for each person can be counted off as part of the construction process and all objects start on side A. A constructor or factory method can maage this for you. Finally, the question of which group implementation to use and how to best to construct that Group is completely managed by the PuzzleState through the factory method and the new field. Users can set the implementation with the mutator and then the factory method will then construct that initial object in whatever way it sees fit. From the user perspective, no Group need be explicitly instantiated. The factory method carries out the grunt work and if the Group is actually needed for some reason, then the user can select whatever group gets constructed by the factory method. To fully control the construction of PuzzleStates we can make the actual constructors private and restrict their use to the Factory method. This means we cannot directly test the factory but must instead test that the PuzzleState constructed by the factory has the expected behavior. In this case, that means checking things like the Group and the result of canCross. We'll discuss the details of the factory method in class Friday so focus on clear documentation and testing of the PuzzleState behavior. 
-
-\section{Homework 5}
-
-\begin{center}
-\textbf{Due before the next lab}
-\end{center}
-
-For homework you'll implement a basic CLI-based UI for our program. We'll consider two different ways of invoking the program:
-\begin{enumerate}
-\item At the CLI, users pass the name of a CSV file where the first line is the flashlights' battery power and the second line is the speed of each person separated by commas
-\item Users pass the battery power as the first argument followed by one or more speeds for people. 
-\end{enumerate} 
-In both cases the result of canCross is reported to the standard output in a descriptive manner\sidenote{something like, ``this puzzle is solvable'' would suffice}. 
-
-Notice the first option takes a single argument and the second takes at least two. This should allow us to easily differentiate which case we're dealing with without using special flags like we typically see at the CLI. Completing this program gives us further practice with Arrays\sidenote{\url{https://docs.oracle.com/javase/tutorial/java/nutsandbolts/arrays.html}} while also giving us a chance to work with CLI arguments\sidenote{\url{https://docs.oracle.com/javase/tutorial/essential/environment/cmdLineArgs.html}} and File I/O\sidenote{\url{https://docs.oracle.com/javase/tutorial/essential/io/scanning.html}}.  While we can certainly design a class or two to assist with the UI logic, for now we'll just cram it all in the \textit{main} or PuzzleState. 
-
-
-
-\newpage \thispagestyle{empty}
-
-\section{ Updated UML Diagram }
-
-The UML diagram has been updated based on this week's tasks and the solution to last week's lab found on the server. Notice there is one new element to the diagram, underlined methods. Something that is underlined is \textsc{static}. In this case both the factory and the main methods are static methods. 
-
-\begin{empfile}["lab6"]
-\begin{figure*}[ht]
-\begin{center}
-\begin{emp}[](0,0)
-
-Class.pState("PuzzleState")
-("-flight : Flashlight",
- "-people : Group",
- static "-impType : GroupImp")
-("-PuzzleState()",
- "-PuzzleState(Flashlight, Group)",
- "+canCross() : boolean",
- "+getGroup() : Group",
- static "+setGroupImplementation(GroupImp) : void",
- static "+createInitialState(int flighttime, int[] speeds) : PuzzleState",
- static "+main(String[] args) : void");
-
-Class.GImp("GroupImp")
-("+Array","+List")();
-GImp.info.iMethodStack.top := 0;
-GImp.info.iMethodStack.bottom := 0;
-Class_stereotypes.GImp("<<enumeration>>");
-
-Class.Pson("Person")
-("-speed : int","-int : id","-isOnA : boolean")
-("+getSpeed() : int");
-
-Class.Flight("Flashlight")
-("-batleft : int",
- "-isonA : boolean")
-("+batteryLeft() : int");
-
-Interface.iGrp("Group")
-("+totalTime() : int",
- "+findFastest() : Person",
- "+size() : int");
-Class_stereotypes.iGrp("<<interface>>");
-
-Class.aGrp("ArrayGroup")
-("-people : Person[*]")
-();
-
-Class.lGrp("ListGroup")
-("-people : PList")
-("+isEmpty() : boolean",
- "+prepend(Person) : ListGroup"
-);
-
-Interface.plst("PList")
-("+totalTime() : int",
- "+findFastest() : Person",
- "+size() : int");
-Class_stereotypes.plst("<<interface>>");
-
-Class.mtplst("MTPList")
-()
-();
-
-Class.cplst("ConsPList")
-("-fst : Person","-rst : PList")
-();
-
-leftToRight(20)(GImp,pState);
-iGrp.ne = pState.s + (-40,-30);
-Flight.nw = pState.s + (40,-30);
-aGrp.ne = iGrp.sw + (-20,-30);
-lGrp.nw = iGrp.se + (20,-30);
-cplst.ne = plst.sw + (-10,-30);
-mtplst.nw = plst.se + (10,-30);
-topToBottom(50)(aGrp, Pson);
-topToBottom(30)(lGrp,plst);
-drawObjects(pState,GImp,Flight,lGrp,Pson,iGrp,aGrp,plst,mtplst,cplst);
-
-link(inheritance)(lGrp.nw -- iGrp.s);
-link(inheritance)(aGrp.ne -- iGrp.s);
-link(inheritance)(cplst.n -- plst.s);
-link(inheritance)(mtplst.n -- plst.s); 	
-link(associationUni)(pState.w -- GImp.e);
-link(associationUni)(pState.s -- iGrp.ne);
-link(associationUni)(pState.s -- Flight.nw);
-link(associationUni)(aGrp.s -- Pson.n);
-link(associationUni)(cplst.w -- Pson.e );
-link(associationUni)(cplst.nw -- plst.sw );
-link(associationUni)(lGrp.s -- plst.n);
-
-
-\end{emp}
-\caption{A Framework for Exploring the Puzzle Problem}
-\label{fig:lab6}
-\end{center}
-\end{figure*}
-\end{empfile}
-
+This form of generalization has a trade off. Any place we need or want to work in terms the contained type we must do so strictly at the Comparable type level. For example, returning an element of the heap will mean returning a Comparable. At the user level this will mean type casting the returned value to something more specific. Construction and equality testing are also a bit problematic as the most we can say in the implementation is that we have an array of Comparable-typed data.
 
 
 \end{document}

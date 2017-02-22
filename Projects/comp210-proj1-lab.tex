@@ -38,10 +38,10 @@
 \setlength{\textwidth}{6.5in} \setlength{\oddsidemargin}{0in}
 \setlength{\evensidemargin}{0in}
 
- 
-\title{COMP 210 - Project 1 Lab Worksheet}
+
+\title{COMP 210 \\ Project 1 Lab Worksheet}
 \author{}
-\date{Spring 2016}
+\date{Spring 2017}
 
 \begin{document}
 \maketitle
@@ -53,7 +53,7 @@
 
 \begin{enumerate}
 
-\item Table \ref{tab:code} provides a variable-length, prefix-free code for a five letter alphabet. 
+\item Table~\ref{tab:code} provides a variable-length, prefix-free code for a five letter alphabet.
 \begin{table}[!htpb]
 \begin{center}
 \begin{tabular}{cccccc}
@@ -67,9 +67,9 @@ code & 010 &  00 & 10 &  011 & 11
 
 For this code you need to:
 \begin{itemize}
-\item Draw the binary tree that represents this code. 
-\item Encode the message \textit{adedbbc} with the code. 
-\item Decode the message 0110101000 with this code. 
+\item Draw the binary tree that represents this code.
+\item Encode the message \textit{adedbbc} with the code.
+\item Decode the message 0110101000 with this code.
 \end{itemize}
 
 
@@ -80,13 +80,13 @@ For this code you need to:
 \item Construct a fixed length, binary code for this alphabet that uses the least number of bits per possible and draw the binary tree that represents that code. As a ``bonus'' see if you can figure out how many possible fixed length codes with this same length you could have for this language.
 \newpage \thispagestyle{empty}
 
-\item In table \ref{tab:freq} below you're given a relative frequency for each letter. Use these to construct a Huffman code for this language. Try to place trees of smaller value in the left subtree and when choosing between two trees of equal value choose the smaller (in size) tree to go left or if both trees are of size one, then choose the alphabetically first tree to go left. If both of the trees being combined are the same size and value then choose the one that has been in the forest/collection longest to go on the left. In theory, following these guides will ensure that we all get the same tree. 
+\item In table~\ref{tab:freq} below you're given a relative frequency for each letter. Use these to construct a Huffman code for this language. Try to place trees of smaller value in the left subtree and when choosing between two trees of equal value choose the smaller (in size) tree to go left or if both trees are of size one, then choose the alphabetically first tree to go left. If both of the trees being combined are the same size and value then choose the one that has been in the forest/collection longest to go on the left. In theory, following these guides will ensure that we all get the same tree.
 
 \begin{table}[!htpb]
 \begin{center}
 \begin{tabular}{ccccccccc}
 letter    & a & b & c & d &  e & f & g & h \\
-frequency & .184 & .105 & .053 & .184 & .053 & .105 & .079 & .237 
+frequency & .184 & .105 & .053 & .184 & .053 & .105 & .079 & .237
 \end{tabular}
 \end{center}
 \caption{An eight letter alphabet with relative frequencies}
@@ -97,7 +97,7 @@ frequency & .184 & .105 & .053 & .184 & .053 & .105 & .079 & .237
 \mbox{ }
 \newpage \thispagestyle{empty}
 
-\item Re-draw your Huffman tree but label each by enumerating the nodes. Start with one at the root and then count left to right and top to bottom. Nodes with a depth of 1 should be 2 and 3, then depth 2 should get 4, 5, 6, etc. Once your tree is drawn, carry out a preorder, inorder, and postorder traversal of the resultant tree and list the order in which the nodes are visited for each traversal. 
+\item Re-draw your Huffman tree but label each by enumerating the nodes. Start with one at the root and then count left to right and top to bottom. Nodes with a depth of 1 should be 2 and 3, then depth 2 should get 4, 5, 6, etc. Once your tree is drawn, carry out a preorder, inorder, and postorder traversal of the resultant tree and list the order in which the nodes are visited for each traversal.
 
 \end{enumerate}
 
